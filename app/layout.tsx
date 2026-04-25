@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
-import { Head } from "nextra/components"
+import { Banner, Head } from "nextra/components"
 import { getPageMap } from "nextra/page-map"
 import { Footer, Layout, Navbar } from "nextra-theme-docs"
 import "nextra-theme-docs/style.css"
@@ -27,6 +27,11 @@ export const metadata: Metadata = {
 
 const navbar = <Navbar logo={<b>Elips doc</b>} />
 const footer = <Footer>MIT {new Date().getFullYear()} © ELIPS Docs.</Footer>
+const banner = (
+  <Banner storageKey="course-updating-2026-04-25">
+    🎉 当前视频内容与课程笔记正在持续更新中。
+  </Banner>
+)
 
 export default async function RootLayout({
   children,
@@ -48,6 +53,7 @@ export default async function RootLayout({
       <Head />
       <body>
         <Layout
+          banner={banner}
           navbar={navbar}
           pageMap={await getPageMap()}
           footer={footer}
