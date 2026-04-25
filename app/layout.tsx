@@ -5,6 +5,8 @@ import { getPageMap } from "nextra/page-map"
 import { Footer, Layout, Navbar } from "nextra-theme-docs"
 import "nextra-theme-docs/style.css"
 import "./globals.css"
+
+import { defaultSocialImage, siteConfig } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
 
 const geist = Geist({
@@ -18,15 +20,60 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteConfig.url),
+  applicationName: siteConfig.name,
   title: {
-    default: "ELPIS Docs",
-    template: "%s | ELPIS Docs",
+    default: siteConfig.defaultTitle,
+    template: `%s | ${siteConfig.defaultTitle}`,
   },
-  description: "Documentation for ELPIS.",
+  description: siteConfig.defaultDescription,
+  keywords: siteConfig.keywords,
+  authors: [{ name: siteConfig.creator }],
+  creator: siteConfig.creator,
+  publisher: siteConfig.creator,
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: siteConfig.locale,
+    url: "/",
+    siteName: siteConfig.name,
+    title: siteConfig.defaultTitle,
+    description: siteConfig.defaultDescription,
+    images: [defaultSocialImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.defaultTitle,
+    description: siteConfig.defaultDescription,
+    images: [defaultSocialImage.url],
+  },
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
+  },
 }
 
 const navbar = <Navbar logo={<b>ELPIS doc</b>} />
-const footer = <Footer>MIT {new Date().getFullYear()} © ELPIS Docs.</Footer>
+const footer = (
+  <Footer>
+    MIT {new Date().getFullYear()} © {siteConfig.name}.
+  </Footer>
+)
 const banner = (
   <Banner storageKey="course-updating-2026-04-25">
     🎉 当前视频内容与课程笔记正在持续更新中。

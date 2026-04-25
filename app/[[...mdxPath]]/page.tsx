@@ -1,5 +1,7 @@
+import type { Metadata } from "next"
 import { useMDXComponents as getMDXComponents } from "@/mdx-components"
 import { generateStaticParamsFor, importPage } from "nextra/pages"
+import { createNextraPageMetadata } from "@/lib/seo"
 
 type PageProps = {
   params: Promise<{
@@ -9,11 +11,11 @@ type PageProps = {
 
 export const generateStaticParams = generateStaticParamsFor("mdxPath")
 
-export async function generateMetadata(props: PageProps) {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
   const params = await props.params
   const { metadata } = await importPage(params.mdxPath)
 
-  return metadata
+  return createNextraPageMetadata(metadata, params.mdxPath)
 }
 
 const Wrapper = getMDXComponents().wrapper!
