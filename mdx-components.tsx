@@ -1,5 +1,5 @@
-import { AboutPage } from "@/components/about/about-page"
-import { CourseHomepage } from "@/components/home/course-homepage"
+import { AboutPage } from "@/components/about"
+import { CourseHomepage } from "@/components/home"
 import { Button } from "@/components/ui/button"
 import { DiaTextReveal } from "@/components/ui/dia-text-reveal"
 import { HeroVideoDialog } from "@/components/ui/hero-video-dialog"
