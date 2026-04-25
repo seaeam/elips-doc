@@ -1,15 +1,17 @@
-import type { MDXComponents } from "nextra/mdx-components"
-import { useMDXComponents as getThemeComponents } from "nextra-theme-docs"
+import { CourseHomepage } from "@/components/home/course-homepage"
 import { Button } from "@/components/ui/button"
-import { HeroVideoDialog } from "@/components/ui/hero-video-dialog"
-import MuxPlayer from "@mux/mux-player-react"
 import { DiaTextReveal } from "@/components/ui/dia-text-reveal"
+import { HeroVideoDialog } from "@/components/ui/hero-video-dialog"
+import { useMDXComponents as getThemeComponents } from "nextra-theme-docs"
+import type { MDXComponents } from "nextra/mdx-components"
+import Player from "./components/ui/player"
 
 const themeComponents = getThemeComponents()
 const customComponents: MDXComponents = {
   Button,
+  CourseHomepage,
   HeroVideoDialog,
-  MuxPlayer,
+  MuxPlayer: Player,
   DiaTextReveal,
 }
 

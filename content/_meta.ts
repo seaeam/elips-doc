@@ -6,6 +6,7 @@ const meta: MetaRecord = {
     type: "page",
     display: "hidden",
     theme: {
+      copyPage: false,
       pagination: false,
       sidebar: false,
       layout: "full",
