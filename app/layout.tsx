@@ -19,14 +19,14 @@ const fontMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "ELIPS Docs",
-    template: "%s | ELIPS Docs",
+    default: "ELPIS Docs",
+    template: "%s | ELPIS Docs",
   },
-  description: "Documentation for ELIPS.",
+  description: "Documentation for ELPIS.",
 }
 
-const navbar = <Navbar logo={<b>Elips doc</b>} />
-const footer = <Footer>MIT {new Date().getFullYear()} © ELIPS Docs.</Footer>
+const navbar = <Navbar logo={<b>ELPIS doc</b>} />
+const footer = <Footer>MIT {new Date().getFullYear()} © ELPIS Docs.</Footer>
 const banner = (
   <Banner storageKey="course-updating-2026-04-25">
     🎉 当前视频内容与课程笔记正在持续更新中。
