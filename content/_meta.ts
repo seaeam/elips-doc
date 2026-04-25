@@ -21,6 +21,8 @@ const meta: MetaRecord = {
     title: "关于",
     type: "page",
     theme: {
+      copyPage: false,
+      layout: "full",
       pagination: false,
       sidebar: false,
       toc: false,
