@@ -2,9 +2,8 @@ import type { MetaRecord } from "nextra"
 
 const meta: MetaRecord = {
   index: {
-    title: "课程介绍",
+    title: "首页",
     type: "page",
-    display: "hidden",
     theme: {
       copyPage: false,
       pagination: false,

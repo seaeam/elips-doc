@@ -16,6 +16,7 @@ import { DiaTextReveal } from "@/components/ui/dia-text-reveal"
 import Player from "@/components/ui/player"
 import { SparklesText } from "@/components/ui/sparkles-text"
 import type { CourseHeroStat } from "../../types"
+import { NoiseTexture } from "@/components/ui/noise-texture"
 
 type CourseHomeHeroProps = {
   heroPlaybackId: string
@@ -79,7 +80,8 @@ export function CourseHomeHero({
       </BlurFade>
 
       <BlurFade inView delay={0.15}>
-        <Card className="p-4">
+        <Card className="relative w-full max-w-md overflow-hidden border bg-card/80 p-4">
+          <NoiseTexture noiseOpacity={0.45} />
           <CardHeader>
             <div className="flex items-center justify-between gap-4">
               <div className="space-y-1">

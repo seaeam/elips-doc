@@ -9,33 +9,40 @@ type UsagePolicyProps = {
 
 export function UsagePolicy({ policyRules }: UsagePolicyProps) {
   return (
-    <section className="px-6 pb-14 md:px-10">
+    <section className="px-6 pb-16 md:px-10">
       <div className="mx-auto max-w-6xl space-y-8">
         <BlurFade inView>
           <SectionHeader
             badge="边界"
-            title="使用范围很简单，按这三条理解就够了"
-            description="这部分只保留最直接的表述。"
+            title="哪些内容可以用，哪些事情不要做"
+            description="这几条不是额外包装，只是把使用边界提前说清楚。"
           />
         </BlurFade>
 
-        <div className="divide-y divide-border/60 rounded-2xl border border-border/60 bg-background/65">
+        <div className="grid gap-4 md:grid-cols-3">
           {policyRules.map((rule, index) => {
             const Icon = rule.icon
 
             return (
               <BlurFade key={rule.title} inView delay={index * 0.06}>
-                <div className="grid gap-3 px-5 py-4 md:grid-cols-[180px_1fr] md:gap-6 md:px-6">
-                  <div className="flex items-center gap-2.5">
-                    <Icon className="size-4 text-foreground/75" />
-                    <p className="text-sm font-medium text-foreground">
+                <article className="h-full rounded-2xl border border-border/60 bg-background/70 p-5 transition-colors hover:border-foreground/15">
+                  <div className="mb-5 flex items-center justify-between gap-4">
+                    <div className="flex size-10 items-center justify-center rounded-lg border border-border/70 bg-muted/40">
+                      <Icon className="size-4 text-foreground/75" />
+                    </div>
+                    <span className="text-xs text-muted-foreground">
+                      0{index + 1}
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    <h3 className="text-base font-medium text-foreground">
                       {rule.title}
+                    </h3>
+                    <p className="text-sm leading-7 text-muted-foreground">
+                      {rule.description}
                     </p>
                   </div>
-                  <p className="text-sm leading-7 text-muted-foreground">
-                    {rule.description}
-                  </p>
-                </div>
+                </article>
               </BlurFade>
             )
           })}

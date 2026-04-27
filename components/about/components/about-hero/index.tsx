@@ -1,10 +1,8 @@
-import Link from "next/link"
-import { ArrowRight, Home } from "lucide-react"
-
 import { Badge } from "@/components/ui/badge"
 import { BlurFade } from "@/components/ui/blur-fade"
 import { Button } from "@/components/ui/button"
-
+import { ArrowRight, BookOpen, Home } from "lucide-react"
+import Link from "next/link"
 import type { AboutHeroNote } from "../../types"
 import { getAboutNoteClassName } from "../../utils"
 
@@ -22,14 +20,14 @@ export function AboutHero({
   heroTitle,
 }: AboutHeroProps) {
   return (
-    <section className="px-6 pt-10 pb-14 md:px-10 md:pt-14">
-      <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)] lg:items-start">
-        <BlurFade inView className="space-y-7">
+    <section className="px-6 pt-12 pb-16 md:px-10 md:pt-16">
+      <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)] lg:items-center">
+        <BlurFade inView className="space-y-8">
           <div className="flex flex-wrap items-center gap-2.5">
             {heroBadges.map((badge, index) => (
               <Badge
                 key={badge}
-                variant={index === 1 ? "destructive" : "outline"}
+                variant={index === 0 ? "secondary" : "outline"}
                 className="px-3 py-1"
               >
                 {badge}
@@ -37,8 +35,8 @@ export function AboutHero({
             ))}
           </div>
 
-          <div className="space-y-4">
-            <h1 className="max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">
+          <div className="space-y-5">
+            <h1 className="max-w-3xl text-4xl leading-tight font-semibold tracking-tight md:text-6xl">
               {heroTitle}
             </h1>
             <p className="max-w-2xl text-base leading-8 text-muted-foreground md:text-lg">
@@ -63,11 +61,16 @@ export function AboutHero({
         </BlurFade>
 
         <BlurFade inView delay={0.12}>
-          <div className="rounded-2xl border border-foreground/10 bg-background/80 p-6 shadow-[0_24px_80px_-52px_rgba(0,0,0,0.42)] backdrop-blur-xl">
-            <div className="space-y-2 border-b border-border/60 pb-5">
-              <p className="text-sm font-medium text-foreground">使用说明</p>
+          <div className="relative overflow-hidden rounded-2xl border border-foreground/10 bg-background/85 p-6">
+            <div className="space-y-3 border-b border-border/60 pb-5">
+              <div className="flex items-center gap-2.5">
+                <BookOpen className="size-4 text-foreground/75" />
+                <p className="text-sm font-medium text-foreground">
+                  这份笔记记录什么
+                </p>
+              </div>
               <p className="text-sm leading-7 text-muted-foreground">
-                这页只说明资料来源和使用范围，信息保持简洁，不做对外展示。
+                记录课程目录、章节重点、实现过程和学习时补充的理解。需要完整讲解时，仍然回到原课程。
               </p>
             </div>
 
@@ -78,7 +81,7 @@ export function AboutHero({
                 return (
                   <div
                     key={note.title}
-                    className={`rounded-xl border px-4 py-3 ${getAboutNoteClassName(note.tone)}`}
+                    className={`rounded-xl border px-4 py-3.5 ${getAboutNoteClassName(note.tone)}`}
                   >
                     <div className="flex items-start gap-3">
                       <Icon className="mt-1 size-4 shrink-0 text-foreground/75" />

@@ -8,6 +8,7 @@ import "./globals.css"
 
 import { defaultSocialImage, siteConfig } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
+import Text3DFlip from "@/components/ui/text-3d-flip"
 
 const geist = Geist({
   subsets: ["latin"],
@@ -68,7 +69,23 @@ export const metadata: Metadata = {
   },
 }
 
-const navbar = <Navbar logo={<b>ELPIS doc</b>} />
+const navbar = (
+  <Navbar
+    logo={
+      <Text3DFlip
+        className="bg-background font-serif"
+        textClassName="bg-background text-foreground"
+        flipTextClassName="bg-background text-foreground"
+        rotateDirection="top"
+        staggerFrom="first"
+        staggerDuration={0.03}
+        transition={{ type: "spring", damping: 25, stiffness: 160 }}
+      >
+        ELPIS Doc
+      </Text3DFlip>
+    }
+  />
+)
 const footer = (
   <Footer>
     MIT {new Date().getFullYear()} © {siteConfig.name}.

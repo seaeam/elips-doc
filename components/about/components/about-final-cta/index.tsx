@@ -11,10 +11,10 @@ export function AboutFinalCta() {
         <div className="grid gap-8 border-t border-border/60 pt-8 md:grid-cols-[1fr_auto] md:items-end">
           <div className="space-y-3">
             <h2 className="text-2xl font-semibold tracking-tight">
-              说明清楚后，就可以直接进入课程了
+              了解背景后，就可以按章节开始看了
             </h2>
             <p className="max-w-2xl text-sm leading-7 text-muted-foreground">
-              页面职责到这里为止。后续学习仍以课程内容本身为准。
+              课程目录会继续补充笔记和实现记录。需要完整讲解时，仍然回到原课程。
             </p>
           </div>
 
