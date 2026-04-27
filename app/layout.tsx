@@ -88,7 +88,7 @@ const navbar = (
 )
 const footer = (
   <Footer>
-    MIT {new Date().getFullYear()} © {siteConfig.name}.
+    MIT {new Date().getFullYear()} © 506-{siteConfig.name}.
   </Footer>
 )
 const banner = (

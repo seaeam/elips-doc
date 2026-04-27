@@ -13,10 +13,11 @@ import { ArrowRight, Info, Sparkles } from "lucide-react"
 import Link from "next/link"
 
 import { DiaTextReveal } from "@/components/ui/dia-text-reveal"
+import { NoiseTexture } from "@/components/ui/noise-texture"
 import Player from "@/components/ui/player"
 import { SparklesText } from "@/components/ui/sparkles-text"
 import type { CourseHeroStat } from "../../types"
-import { NoiseTexture } from "@/components/ui/noise-texture"
+import { ShineBorder } from "@/components/ui/shine-border"
 
 type CourseHomeHeroProps = {
   heroPlaybackId: string
@@ -64,17 +65,16 @@ export function CourseHomeHero({
           </Button>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="relative grid w-full gap-4 overflow-hidden rounded-lg sm:grid-cols-3">
+          <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
           {heroStats.map((stat) => (
-            <SparklesText key={stat.label} sparklesCount={3}>
-              <div className="space-y-1">
-                <div className="text-3xl font-semibold tracking-tight">
-                  <NumberTicker value={stat.value} delay={stat.delay} />
-                  {stat.suffix}
-                </div>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
+            <div key={stat.label} className="p-4">
+              <div className="text-3xl font-semibold tracking-tight">
+                <NumberTicker value={stat.value} delay={stat.delay} />
+                {stat.suffix}
               </div>
-            </SparklesText>
+              <p className="text-sm text-muted-foreground">{stat.label}</p>
+            </div>
           ))}
         </div>
       </BlurFade>

@@ -16,6 +16,7 @@ import { NumberTicker } from "@/components/ui/number-ticker"
 import { getSectionStatusVariant } from "../../utils"
 import { SectionHeader } from "../section-header"
 import type { CourseSection } from "../../types"
+import { LineShadowText } from "@/components/ui/line-shadow-text"
 
 type CurriculumGridProps = {
   sections: CourseSection[]
@@ -70,7 +71,9 @@ export function CurriculumGrid({ sections }: CurriculumGridProps) {
                     <span className="font-medium text-foreground">
                       <NumberTicker value={section.lessons} /> 节
                     </span>
-                    <span>持续整理视频与笔记</span>
+                    <LineShadowText className="italic" as="span">
+                      Updating...
+                    </LineShadowText>
                   </div>
                 </CardContent>
                 <CardFooter className="justify-between gap-3">
