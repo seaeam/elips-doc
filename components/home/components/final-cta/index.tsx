@@ -6,6 +6,7 @@ import { BlurFade } from "@/components/ui/blur-fade"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { ShineBorder } from "@/components/ui/shine-border"
+import { NoiseTexture } from "@/components/ui/noise-texture"
 
 export function FinalCta() {
   return (
@@ -22,6 +23,7 @@ export function FinalCta() {
             ]}
           />
           <CardContent className="grid gap-8 px-6 py-8 md:grid-cols-[1fr_auto] md:px-8 md:py-10">
+            <NoiseTexture noiseOpacity={0.45} />
             <div className="space-y-3">
               <Badge variant="secondary" className="px-3 py-1">
                 持续更新中

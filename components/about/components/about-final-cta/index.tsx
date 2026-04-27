@@ -1,5 +1,5 @@
-import Link from "next/link"
 import { ArrowRight, Home } from "lucide-react"
+import Link from "next/link"
 
 import { BlurFade } from "@/components/ui/blur-fade"
 import { Button } from "@/components/ui/button"
