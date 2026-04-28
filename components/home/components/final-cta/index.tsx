@@ -24,29 +24,29 @@ export function FinalCta() {
           />
           <CardContent className="grid gap-8 px-6 py-8 md:grid-cols-[1fr_auto] md:px-8 md:py-10">
             <NoiseTexture noiseOpacity={0.45} />
-            <div className="space-y-3">
+            <div className="flex flex-col gap-3">
               <Badge variant="secondary" className="px-3 py-1">
-                持续更新中
+                准备开始
               </Badge>
               <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-                现在就从课程目录进入，按章节把 Elpis 的主线串起来
+                先理解这套框架思路，再进入具体课程笔记
               </h2>
               <p className="max-w-2xl text-sm leading-7 text-muted-foreground md:text-base">
-                首页负责建立整体视角，课程目录负责逐节推进。视频和笔记都会继续补全，你可以从已更新章节先开始。
+                当你已经清楚为什么要做领域模型架构，可以按模块继续推进；想了解课程来源和维护方式，可以继续看课程说明。
               </p>
             </div>
 
             <div className="flex flex-col gap-3 md:items-stretch">
-              <Button asChild className="h-10 px-5">
+              <Button asChild>
                 <Link href="/courses">
-                  目录
-                  <ArrowRight />
+                  打开目录
+                  <ArrowRight data-icon="inline-end" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" className="h-10 px-5">
+              <Button asChild variant="outline">
                 <Link href="/about">
                   关于
-                  <Info />
+                  <Info data-icon="inline-end" />
                 </Link>
               </Button>
             </div>

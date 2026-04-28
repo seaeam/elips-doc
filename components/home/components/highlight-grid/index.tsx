@@ -12,9 +12,9 @@ export function HighlightGrid({ highlights }: HighlightGridProps) {
     <section className="mx-auto max-w-6xl px-6 py-16 md:px-10">
       <BlurFade inView>
         <SectionHeader
-          badge="学习收益"
-          title="完整的系统搭建过程"
-          description="不只是框架 API 使用，更是问题抽象、架构判断、工程建设与模型落地。"
+          badge="课程定位"
+          title="这门课真正想训练的能力"
+          description="先建立判断框架，再带着业务系统中的重复问题去理解模型、架构和工程实现。"
         />
       </BlurFade>
 
@@ -22,7 +22,7 @@ export function HighlightGrid({ highlights }: HighlightGridProps) {
         {highlights.map((item, index) => (
           <BlurFade key={item.title} inView delay={index * 0.06}>
             <Card className="h-full border border-border/60 bg-background/70">
-              <CardContent className="space-y-3 pt-5">
+              <CardContent className="flex flex-col gap-3 pt-5">
                 <div className="flex items-center gap-3">
                   <div className="rounded-lg border border-border/70 bg-muted/60 p-2">
                     <item.icon className="size-4 text-foreground/80" />

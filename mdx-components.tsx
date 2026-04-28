@@ -1,4 +1,5 @@
 import { AboutPage } from "@/components/about"
+import { CourseCatalog } from "@/components/course-catalog"
 import { CourseHomepage } from "@/components/home"
 import { Button } from "@/components/ui/button"
 import { DiaTextReveal } from "@/components/ui/dia-text-reveal"
@@ -11,6 +12,7 @@ const themeComponents = getThemeComponents()
 const customComponents: MDXComponents = {
   AboutPage,
   Button,
+  CourseCatalog,
   CourseHomepage,
   HeroVideoDialog,
   MuxPlayer: Player,

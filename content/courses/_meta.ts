@@ -1,7 +1,16 @@
 import type { MetaRecord } from "nextra"
 
 const meta: MetaRecord = {
-  index: "课程目录",
+  index: {
+    title: "课程目录",
+    theme: {
+      copyPage: false,
+      pagination: false,
+      sidebar: true,
+      layout: "full",
+      toc: false,
+    },
+  },
   "01-introduction": "前言",
   "02-requirement": "行业分析与需求推导",
   "03-technology-selection-and-architecture": "技术选型与架构设计",

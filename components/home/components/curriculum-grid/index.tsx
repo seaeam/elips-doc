@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/card"
 import { NumberTicker } from "@/components/ui/number-ticker"
 
-import { getSectionStatusVariant } from "../../utils"
+import { getSectionStatusVariant } from "@/components/course-catalog/utils"
+import type { CourseSection } from "@/components/course-catalog/types"
 import { SectionHeader } from "../section-header"
-import type { CourseSection } from "../../types"
 import { LineShadowText } from "@/components/ui/line-shadow-text"
 
 type CurriculumGridProps = {
@@ -42,7 +42,7 @@ export function CurriculumGrid({ sections }: CurriculumGridProps) {
               <Card className="h-full border border-border/60 bg-background/70 transition-transform duration-300 hover:-translate-y-1 hover:border-foreground/15">
                 <CardHeader className="gap-3">
                   <div className="flex items-start justify-between gap-4">
-                    <div className="space-y-3">
+                    <div className="flex flex-col gap-3">
                       <Badge variant="outline" className="px-3 py-1">
                         第 {section.number} 章
                       </Badge>
@@ -63,7 +63,7 @@ export function CurriculumGrid({ sections }: CurriculumGridProps) {
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="flex flex-col gap-4">
                   <p className="text-sm leading-7 text-muted-foreground">
                     {section.summary}
                   </p>
@@ -80,10 +80,10 @@ export function CurriculumGrid({ sections }: CurriculumGridProps) {
                   <span className="text-xs tracking-[0.16em] text-muted-foreground uppercase">
                     Course Module
                   </span>
-                  <Button asChild variant="ghost" size="sm" className="">
+                  <Button asChild variant="ghost" size="sm">
                     <Link href={section.href}>
                       查看章节
-                      <ArrowRight className="ml-1 size-4" />
+                      <ArrowRight data-icon="inline-end" />
                     </Link>
                   </Button>
                 </CardFooter>
