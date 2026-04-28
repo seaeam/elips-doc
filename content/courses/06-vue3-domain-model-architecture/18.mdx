@@ -1,6 +1,6 @@
 ---
 title: 模板引擎 - SchemaSearchBar 实现（2）
-description: 模板引擎 - SchemaSearchBar 实现（2）
+description: "围绕「模板引擎 - SchemaSearchBar 实现（2）」整理的课程复盘笔记，聚焦 DSL、解析引擎、模型应用和模板引擎。"
 ---
 
 # 模板引擎 - SchemaSearchBar 实现（2）
@@ -10,3 +10,19 @@ description: 模板引擎 - SchemaSearchBar 实现（2）
   playbackId="iVPHVQPBSKcpyj2Y9IDdBxstDJeaMacha900dEqt4dZo"
   title="模板引擎 - SchemaSearchBar 实现（2）"
 />
+
+## 本节定位
+
+本节围绕「模板引擎 - SchemaSearchBar 实现（2）」展开，是「Vue3 领域模型架构」模块中的一个关键节点。复盘时先把它放回本章目标中理解：把业务页面、接口、布局和组件能力抽象为 DSL 与模板引擎，并落到可运行页面。
+
+## 重点笔记
+
+- 把查询条件、筛选表单和搜索交互抽象为可配置能力。
+- SchemaSearchBar 与 SchemaTable 配合，形成列表页中最常见的查询和展示闭环。
+- 后续动态组件库会继续把这类配置能力沉淀到组件层。
+
+## 复盘清单
+
+- 搜索项如何从 Schema 中生成？
+- 查询参数如何和表格数据联动？
+- 哪些搜索交互需要保留自定义扩展？

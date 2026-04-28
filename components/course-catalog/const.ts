@@ -38,14 +38,18 @@ export const COURSE_SECTIONS: CourseSection[] = [
     number: "02",
     title: "行业分析与需求推导",
     href: "/courses/02-requirement/01",
-    lessons: 1,
+    lessons: 3,
     status: "已更新",
     summary: "从重复性工作和平台化目标出发，推导领域模型架构的真实需求。",
     icon: Workflow,
     focus:
       "把业务开发中的重复建设问题抽象成框架目标，明确 Elpis 需要解决的核心矛盾。",
     keywords: ["需求推导", "领域模型", "框架目标"],
-    lessonTitles: ["搭建基于“领域模型架构”的开发框架"],
+    lessonTitles: [
+      "痛点：纯前端业务开发（体力活，无成长）",
+      "目标：专注架构设计与基建，脱离体力活",
+      "需求：搭建基于“领域模型架构”的开发框架",
+    ],
   },
   {
     number: "03",
@@ -188,14 +192,21 @@ export const COURSE_SECTIONS: CourseSection[] = [
     number: "09",
     title: "赠课扩展：框架应用与项目实践",
     href: "/courses/09-bonus-framework-application-and-practice/01",
-    lessons: 1,
-    status: "持续更新",
-    summary: "用于承接更贴近真实项目的框架应用和实践总结，目前仍在更新中。",
+    lessons: 5,
+    status: "已更新",
+    summary:
+      "补齐 CI/CD、登录鉴权和人员管理等真实项目实践，让框架从封装发布进入应用落地。",
     icon: BookOpen,
     focus:
-      "预留真实项目实践、框架应用复盘和扩展案例，当前页面仍处于内容补充阶段。",
-    keywords: ["项目实践", "扩展案例", "复盘"],
-    lessonTitles: ["课程笔记"],
+      "把前面沉淀的框架能力带回项目现场，完成持续集成、持续部署、登录态校验和业务模块建设。",
+    keywords: ["CI/CD", "登录鉴权", "项目实践"],
+    lessonTitles: [
+      "持续集成（CI）",
+      "持续部署（CD）",
+      "登录功能",
+      "登录校验及登出功能",
+      "人员管理模块",
+    ],
   },
 ]
 
@@ -221,8 +232,8 @@ export const ROADMAP_STEPS: RoadmapStep[] = [
     description: "用 Vue3 承接 DSL、模板引擎与动态组件库的具体实现。",
   },
   {
-    title: "封装发布",
+    title: "封装实践",
     range: "08-09",
-    description: "完成 npm 包抽象发布，并预留项目实践与扩展复盘。",
+    description: "完成 npm 包抽象发布，并补齐 CI/CD、登录鉴权与人员管理实践。",
   },
 ]

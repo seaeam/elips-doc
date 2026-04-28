@@ -31,13 +31,16 @@ export function SectionCard({ sectionHref, index }: SectionCardProps) {
   const section = useCourseCatalogStore(
     (state) => state.sectionsByHref[sectionHref]
   )
+  const currentFocusHref = useCourseCatalogStore(
+    (state) => state.currentFocus.href
+  )
 
   if (!section) {
     return null
   }
 
   const Icon = section.icon
-  const isCurrentFocus = section.number === "08"
+  const isCurrentFocus = section.href === currentFocusHref
 
   return (
     <BlurFade inView delay={index * 0.035}>

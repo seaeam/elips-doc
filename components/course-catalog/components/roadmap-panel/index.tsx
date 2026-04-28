@@ -7,14 +7,15 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Route } from "lucide-react"
-
 import { useCourseCatalogStore } from "../../store"
+import { ShineBorder } from "@/components/ui/shine-border"
 
 export function RoadmapPanel() {
   const roadmapSteps = useCourseCatalogStore((state) => state.roadmapSteps)
 
   return (
     <Card className="border-border/60 bg-background/80">
+      <ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
       <CardHeader className="gap-2">
         <div className="flex items-center gap-3">
           <span className="flex size-9 items-center justify-center rounded-lg border border-border/70 bg-muted/60">
@@ -26,15 +27,13 @@ export function RoadmapPanel() {
           </div>
         </div>
       </CardHeader>
-      <CardContent className="flex flex-col gap-4">
+      <CardContent className="flex flex-col gap-2">
         {roadmapSteps.map((step, index) => (
-          <div key={step.title} className="grid grid-cols-[auto_1fr] gap-3">
+          <div key={step.title} className="grid grid-cols-[auto_1fr] gap-2">
             <div className="flex flex-col items-center gap-2 pt-1">
-              <span className="flex size-7 items-center justify-center rounded-full border border-border bg-background text-xs font-medium">
-                {index + 1}
-              </span>
+              <Badge>{index + 1}</Badge>
               {index < roadmapSteps.length - 1 ? (
-                <span className="h-full min-h-8 w-px bg-border" />
+                <span className="h-full w-px bg-border" />
               ) : null}
             </div>
             <div className="pb-4">

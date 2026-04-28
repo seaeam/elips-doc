@@ -20,7 +20,7 @@ function createCourseCatalogStoreState(): CourseCatalogStoreState {
   const totalModules = sections.length
 
   return {
-    currentFocus: getCurrentFocusSection(sections, "08"),
+    currentFocus: getCurrentFocusSection(sections, "09"),
     expandedSectionHrefs: [],
     heroStats: buildHeroStats(totalLessons, updatedModules, totalModules),
     roadmapSteps: ROADMAP_STEPS,

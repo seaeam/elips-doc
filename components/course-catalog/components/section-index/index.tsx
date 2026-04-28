@@ -18,10 +18,6 @@ export function SectionIndex() {
           <h2 className="text-2xl font-semibold md:text-3xl">
             章节索引与更新状态
           </h2>
-          <p className="max-w-3xl text-sm leading-7 text-muted-foreground md:text-base">
-            每个模块都对应真实 MDX
-            页面，这里只负责展示入口、节数、进度和小节标题，便于按学习阶段快速跳转。
-          </p>
         </div>
       </BlurFade>
 
