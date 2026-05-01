@@ -456,14 +456,15 @@ module.exports = function routerSchemaLoader(app) {
 
 ```mermaid
 flowchart LR
-  A[Koa 实例 app] --> B[middlewareLoader(app)]
-  A --> C[routerSchemaLoader(app)]
-  A --> D[controllerLoader(app)]
-  A --> E[serviceLoader(app)]
-  B --> F[挂载 app.middleware]
-  C --> G[挂载 app.routerSchema]
-  D --> H[挂载 app.controller]
-  E --> I[挂载 app.service]
+  A["Koa 实例 app"] --> B["middlewareLoader(app)"]
+  A --> C["routerSchemaLoader(app)"]
+  A --> D["controllerLoader(app)"]
+  A --> E["serviceLoader(app)"]
+
+  B --> F["挂载 app.middleware"]
+  C --> G["挂载 app.routerSchema"]
+  D --> H["挂载 app.controller"]
+  E --> I["挂载 app.service"]
 ```
 
 后续业务模块最终都会挂到 `app` 上，形成统一的运行时上下文。
