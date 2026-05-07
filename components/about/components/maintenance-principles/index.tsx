@@ -16,8 +16,8 @@ export function MaintenancePrinciples({
         <BlurFade inView>
           <SectionHeader
             badge="整理方式"
-            title="后续怎么维护这份笔记"
-            description="内容会继续补，但不把笔记写成逐字稿，也不改变它和原课程的关系。"
+            title="这份笔记会怎么继续整理"
+            description="后续会持续补充，但重点仍然是结构化整理和复盘，不会改成逐字稿。"
           />
         </BlurFade>
 
@@ -25,7 +25,7 @@ export function MaintenancePrinciples({
           <div className="rounded-2xl border border-border/60 bg-background/70">
             <div className="border-b border-border/60 px-5 py-5 md:px-6">
               <p className="max-w-2xl text-sm leading-7 text-muted-foreground">
-                我们更关心“以后能不能快速找到”和“回看时能不能接上思路”。所以这里会保留课程主线，也会补充自己的理解，但不会把原课程内容重新摊开一遍。
+                这份笔记更重视两件事：以后能不能快速找到内容，以及回看时能不能顺着原来的思路继续读下去。所以我们会保留课程主线，也会补充自己的理解，但不会把原课程重新展开一遍。
               </p>
             </div>
             <div className="space-y-0">

@@ -26,26 +26,26 @@ export function FinalCta() {
             <NoiseTexture noiseOpacity={0.45} />
             <div className="flex flex-col gap-3">
               <Badge variant="secondary" className="px-3 py-1">
-                准备开始
+                开始阅读
               </Badge>
               <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-                先理解这套框架思路，再进入具体课程笔记
+                从导览开始，再按章节深入
               </h2>
               <p className="max-w-2xl text-sm leading-7 text-muted-foreground md:text-base">
-                当你已经清楚为什么要做领域模型架构，可以按模块继续推进；想了解课程来源和维护方式，可以继续看课程说明。
+                想先判断内容是否匹配自己的方向，可以先看导览；如果已经明确目标，直接进入课程目录即可。
               </p>
             </div>
 
             <div className="flex flex-col gap-3 md:items-stretch">
               <Button asChild>
                 <Link href="/courses">
-                  打开目录
+                  查看课程目录
                   <ArrowRight data-icon="inline-end" />
                 </Link>
               </Button>
               <Button asChild variant="outline">
                 <Link href="/about">
-                  关于
+                  了解站点说明
                   <Info data-icon="inline-end" />
                 </Link>
               </Button>

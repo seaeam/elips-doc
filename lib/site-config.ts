@@ -37,7 +37,7 @@ function resolveSiteUrl() {
 export const siteConfig: SiteConfig = {
   creator: "506 Lab",
   defaultDescription:
-    "围绕 ELPIS 框架搭建过程整理的课程笔记，覆盖需求分析、架构设计、Node.js 服务端内核、Webpack 5 工程化与 Vue 3 领域模型等内容。",
+    "面向前端开发者的 ELPIS 学习笔记，聚焦从业务抽象、领域建模到框架实现的完整过程，覆盖 Node.js、Webpack 5 与 Vue 3 等主题。",
   defaultTitle: "ELPIS 课程笔记",
   keywords: [
     "ELPIS",

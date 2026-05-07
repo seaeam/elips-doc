@@ -14,8 +14,8 @@ export function SourceOverview({ sourcePanels }: SourceOverviewProps) {
         <BlurFade inView>
           <SectionHeader
             badge="来源"
-            title="先说明它从哪里来"
-            description="这不是重新包装一门课程，而是把学习过程整理成更方便回看的结构。"
+            title="先说清楚这个站点的来源和定位"
+            description="它的目标是帮助查阅和复盘，不是重新包装一门课程。"
           />
         </BlurFade>
 

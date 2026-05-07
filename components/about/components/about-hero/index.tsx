@@ -47,7 +47,7 @@ export function AboutHero({
           <div className="flex flex-wrap items-center gap-3">
             <Button asChild size="lg" className="h-10 px-5">
               <Link href="/courses">
-                进入课程
+                查看课程目录
                 <ArrowRight className="ml-1 size-4" />
               </Link>
             </Button>
@@ -66,11 +66,11 @@ export function AboutHero({
               <div className="flex items-center gap-2.5">
                 <BookOpen className="size-4 text-foreground/75" />
                 <p className="text-sm font-medium text-foreground">
-                  这份笔记记录什么
+                  这里主要提供什么
                 </p>
               </div>
               <p className="text-sm leading-7 text-muted-foreground">
-                记录课程目录、章节重点、实现过程和学习时补充的理解。需要完整讲解时，仍然回到原课程。
+                提供课程目录、章节重点、实现记录和学习过程中的补充理解，方便查找和复盘。
               </p>
             </div>
 

@@ -13,8 +13,8 @@ export function HighlightGrid({ highlights }: HighlightGridProps) {
       <BlurFade inView>
         <SectionHeader
           badge="课程定位"
-          title="这门课真正想训练的能力"
-          description="先建立判断框架，再带着业务系统中的重复问题去理解模型、架构和工程实现。"
+          title="你会在这里学到什么"
+          description="围绕真实业务中的重复问题，理解抽象、建模和框架落地的完整路径。"
         />
       </BlurFade>
 

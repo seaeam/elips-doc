@@ -14,8 +14,8 @@ export function UsagePolicy({ policyRules }: UsagePolicyProps) {
         <BlurFade inView>
           <SectionHeader
             badge="边界"
-            title="哪些内容可以用，哪些事情不要做"
-            description="这几条不是额外包装，只是把使用边界提前说清楚。"
+            title="把使用边界提前说明白"
+            description="这些内容可以正常用于学习和复盘，但不应被当作原课程替代品传播。"
           />
         </BlurFade>
 

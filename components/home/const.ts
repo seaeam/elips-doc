@@ -6,18 +6,21 @@ export const HERO_PLAYBACK_ID = "q4uXxXiO4YDSbsuZjr882PuAaAiNyNWdMiE18JaHPuM"
 
 export const COURSE_HIGHLIGHTS: CourseHighlight[] = [
   {
-    title: "从重复业务里抽象框架",
-    description: "先识别真实项目里的重复结构，再判断哪些能力值得沉淀成框架。",
+    title: "识别值得抽象的问题",
+    description:
+      "从页面、接口、表单和配置中的重复模式出发，判断哪些能力值得沉淀。",
     icon: Network,
   },
   {
-    title: "用领域模型统一语言",
-    description: "把页面、接口、配置和组件背后的共性，用模型和 DSL 表达清楚。",
+    title: "建立统一的模型语言",
+    description:
+      "用领域模型和 DSL 描述界面结构、数据关系和运行规则，减少口头约定。",
     icon: Workflow,
   },
   {
-    title: "训练架构取舍能力",
-    description: "关注为什么这样设计，以及一个框架如何在复杂业务里持续演进。",
+    title: "把设计落到工程实现",
+    description:
+      "继续推进到 Node.js 服务端、Webpack 工程化和 Vue 3 运行时，形成完整链路。",
     icon: Cpu,
   },
 ]
