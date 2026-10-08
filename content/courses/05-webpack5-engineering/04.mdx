@@ -11,18 +11,242 @@ description: "围绕「webpack5 前端工程化搭建（3）」整理的课程�
   title="webpack5 前端工程化搭建（3）"
 />
 
-## 本节定位
+> [!NOTE]
+>
+> 本节将基础构建拆分成开发与生产两套环境，重点完成生产配置：确定落盘路径、清理历史产物、提取 CSS、组织并行处理、压缩 JavaScript，并抽离 webpack runtime。
+>
+> 课程沿用当时项目中的 `webpack-merge`、HappyPack 等工具。复盘应掌握每项处理解决的问题，同时区分插件版本接口、演示选择和实际产物。下面代码按课程思路整理，省略无法从字幕可靠确认的插件版本细节，不是逐字源码。
 
-本节围绕「webpack5 前端工程化搭建（3）」展开，是「Webpack5 工程化建设」模块中的一个关键节点。复盘时先把它放回本章目标中理解：建立前端工程体系，为多入口、构建、开发调试和后续模型渲染提供基础设施。
+## 基础配置已经完成了什么
 
-## 重点笔记
+前两节已经让 webpack 自动发现页面入口，解析 Vue、JavaScript、样式和资源，生成对应模板，并完成 vendor、common 与入口业务包的拆分。这些能力在开发和生产环境都需要，因此继续保留在基础配置中。
 
-- 把工程化设计落到具体 Webpack 配置、目录结构和开发流程中。
-- 这一组课程共同完成前端工程底座，为模型渲染和组件体系提供承载环境。
-- 每次搭建都要关注新增配置解决了什么问题，以及是否影响后续扩展。
+接下来要处理的差异主要是输出和优化。生产构建需要生成可部署的文件，通常希望代码体积更小；开发过程则需要持续编译、保留调试信息并提供热更新。把它们全部挤在同一份配置中，会出现大量环境判断，也不利于看清每个环境的职责。
 
-## 复盘清单
+课程新增 `webpack.dev.js` 与 `webpack.prod.js`，分别在基础配置上合并环境差异；运行脚本也拆成 `dev.js` 与 `prod.js`。
 
-- 本节新增了哪些工程能力？
-- 这些配置在开发态和构建态分别有什么作用？
-- 当前工程结构是否方便后续接入 Vue3 与模型系统？
+```text filename="环境配置结构" copy
+app/webpack
+├── config
+│   ├── webpack.base.js
+│   ├── webpack.dev.js
+│   └── webpack.prod.js
+├── dev.js
+└── prod.js
+```
+
+基础配置负责共享规则，环境配置负责具体差异，启动脚本负责执行。这里用配置合并实现复用，课程借用了“基类”的说法帮助理解，但它不是 JavaScript 类继承。
+
+## 从基础配置中移出 output
+
+之前为了先看到产物，基础配置已经写入了生产式输出。现在应把它移到生产配置中，给开发配置留出独立的输出空间。
+
+```js filename="app/webpack/config/webpack.prod.js：核心结构" copy
+const path = require("path")
+const merge = require("webpack-merge")
+const baseConfig = require("./webpack.base")
+
+module.exports = merge.smart(baseConfig, {
+  mode: "production",
+  output: {
+    filename: "js/[name]_[chunkhash:8].bundle.js",
+    path: path.resolve(process.cwd(), "app/public/dist/prod"),
+    publicPath: "/dist/prod/",
+    crossOriginLoading: "anonymous",
+  },
+})
+```
+
+这里保留字幕中的 `merge.smart` 用法，它对应课程采用的合并工具接口；不能把不同主版本的导入方式随意混在同一段代码中。`publicPath` 仍需对应项目静态服务的 URL 挂载方式。
+
+`mode: "production"` 明确当前构建模式，也消除之前未设置 mode 的提示。显式模式有助于维护者理解配置意图，后续添加优化时也不必猜测默认行为。
+
+生产执行脚本改为读取 `webpack.prod`，继续使用上一节的 webpack Node.js API 和 stats 输出。这样 `prod.js` 不需要了解每一种插件，只负责执行合并后的完整配置。
+
+## 把执行方式放到 npm scripts
+
+课程为两个环境配置命令，避免每次手工输入完整脚本路径。
+
+```json filename="package.json：构建命令示意" copy
+{
+  "scripts": {
+    "build:dev": "node --max-old-space-size=4096 app/webpack/dev.js",
+    "build:prod": "node app/webpack/prod.js"
+  }
+}
+```
+
+开发命令增加内存上限，是为后续开发服务长期保存编译状态与内存产物做准备。`--max-old-space-size=4096` 的单位是 MiB 级的内存额度，约为 4 GiB，并不是 4 MB。字幕在这个数值的口头说明上有犹豫，复盘应以参数含义为准。
+
+这个参数也不是“热更新必须固定使用 4096”的规则。课程用它预留空间，实际需要多少仍然与工程规模和机器资源有关。本节先准备开发入口，完整开发服务在下一节实现。
+
+## 生产构建先确定要交付什么
+
+课程在配置插件前，先列出生产构建需要完成的动作。这比先收集很多插件再试着拼起来更容易保持方向。
+
+| 动作 | 解决的问题 | 验证方式 |
+| --- | --- | --- |
+| 清理旧产物 | 避免上一次构建的 hash 文件残留 | 连续构建后检查目录 |
+| 提取样式 | 使 CSS 能作为独立资源引用 | 查看 CSS 文件与模板中的 link |
+| 优化 CSS | 减少样式资源冗余 | 检查产物体积与格式 |
+| 并行处理模块 | 尝试缩短构建阶段耗时 | 比较构建执行情况 |
+| 压缩 JavaScript | 减少交付代码体积 | 检查最终 bundle |
+| 清理调试输出 | 避免生产保留开发日志 | 实际打开生产页面 |
+| 抽离 runtime | 独立组织 webpack 运行时代码 | 查看 runtime 产物和引用 |
+
+这些目标并不天然由同一个工具完成。某个插件只负责提取 CSS，另一个工具负责压缩；HappyPack 组织并行任务，但真正转换代码的仍是配置进去的 Loader。把职责分开，才能理解配置为何有多层。
+
+## 清理产物目录
+
+前两节反复手工删除 `dist`，是为了更清楚地观察本次构建。正式构建则应把清理步骤自动化。课程接入 `clean-webpack-plugin`，清理目标是项目的构建产物目录。
+
+清理需要特别注意根目录和范围。模板可能位于 `dist` 根下，JavaScript 则位于 `dist/prod` 下，如果只清理其中一部分，仍可能留下旧文件；反过来，如果把根目录算错，也可能超出预期产物范围。
+
+```text filename="清理边界" copy
+源码：app/pages、app/view、app/webpack
+  -> 保留
+
+本次可重新生成的产物：app/public/dist
+  -> 构建前清理，再由构建系统生成
+```
+
+字幕能够确认课程使用清理插件和项目相对根路径，但没有稳定呈现全部参数拼写，因此这里不拼接一份混合版本的调用。复盘核心是：清理是构建的一部分，范围必须与实际输出一致。
+
+## HappyPack 如何接回 Loader
+
+课程用 HappyPack 演示并行处理，并通过 `os.cpus().length` 获取 CPU 数量来创建线程池。这里的“线程池”沿用该工具的命名，实际工作由工具自身组织，复盘不需要把它等同于浏览器 Web Worker。
+
+```js filename="HappyPack 配置关系示意" copy
+const os = require("os")
+const HappyPack = require("happypack")
+
+const pool = HappyPack.ThreadPool({
+  size: os.cpus().length,
+})
+
+const jsRule = {
+  test: /\.js$/,
+  include: require("path").resolve(process.cwd(), "app/pages"),
+  use: "happypack/loader?id=js",
+}
+
+const jsPlugin = new HappyPack({
+  id: "js",
+  threadPool: pool,
+  loaders: ["babel-loader"],
+})
+```
+
+规则中的 `id=js` 与插件的 `id: "js"` 必须对应。前者把匹配到的 JavaScript 交给相应处理组，后者定义这个处理组实际使用的 Loader。Babel 仍然负责语法转换，HappyPack 负责组织处理任务。
+
+CSS 也可以按相同思路组织。课程为样式创建对应处理组，配置 `css-loader` 等内容。关键是分清“匹配文件”“调度任务”“执行转换”三层，而不是以为加了 HappyPack 就替代了 Babel 或 CSS 解析。
+
+并行并不自动代表所有项目都更快。创建和通信也有开销。课程明确把替代工具和更合适的并行方案留给学习者结合项目思考，本章保留这一时代的工具选择，不把它写成唯一解。
+
+## 样式提取和样式压缩不是一回事
+
+开发阶段使用 `style-loader`，样式会随模块执行注入页面。生产阶段可以通过 CSS 提取插件把样式输出成独立文件，再让模板用 `link` 引用。
+
+```js filename="CSS 提取结构示意" copy
+const MiniCssExtractPlugin = require("mini-css-extract-plugin")
+
+const cssRule = {
+  test: /\.css$/,
+  use: [MiniCssExtractPlugin.loader, "css-loader"],
+}
+
+const cssPlugin = new MiniCssExtractPlugin({
+  filename: "css/[name]_[contenthash:8].css",
+})
+```
+
+这段代码说明提取插件和 Loader 的配合关系。课程具体配置还结合了 HappyPack 与 CSS 优化插件，因此不要把片段直接当成完整生产规则替换全部内容。
+
+提取的职责是改变 CSS 的交付方式。压缩的职责是减少冗余文本、整理可优化表达。两者经常同时出现，但不能说“用了提取插件就已经完成了所有 CSS 压缩”。
+
+课程最初把这部分描述为“公共 CSS 提取，非公共样式 inline”，随后又专门修正了表述，并通过单个页面引入一个独立 CSS 文件进行验证。因而最终应按实际规则和产物理解：被提取规则处理的样式可以生成 CSS 文件，不保证只有多个入口共享的 CSS 才输出。
+
+## 用一个独立 CSS 验证提取链路
+
+课程新增临时 CSS，把页面字体尺寸调大，再从 Page1 引入。构建后应同时看到三个结果：输出目录增加 Page1 相关 CSS，Page1 模板出现 `link`，浏览器页面的文字尺寸发生变化。
+
+```css filename="app/pages/entry.page1/a.css：演示样式" copy
+body {
+  font-size: 60px;
+}
+```
+
+```js filename="Page1 中引入演示样式" copy
+import "./a.css"
+```
+
+这个小例子比只看插件对象更能说明问题。若 CSS 文件存在但页面没有变化，就继续看模板是否引用、请求是否成功、规则是否被覆盖；若文件都没生成，则回到入口依赖和 Loader 匹配范围检查。
+
+验证结束后临时样式可以移除，不把夸张字号当成框架默认样式。
+
+## Terser 与生产日志
+
+课程在压缩阶段使用 `terser-webpack-plugin`，配置并行压缩，并通过 Terser 选项去掉 console 输出。
+
+```js filename="JavaScript 压缩选项示意" copy
+const TerserPlugin = require("terser-webpack-plugin")
+
+const optimization = {
+  minimize: true,
+  minimizer: [
+    new TerserPlugin({
+      parallel: true,
+      terserOptions: {
+        compress: {
+          drop_console: true,
+        },
+      },
+    }),
+  ],
+}
+```
+
+字幕也谈到缓存加速，但不同版本的插件如何接入缓存存在接口差异，因此这里保留可明确表达的并行和压缩关系，不把旧版缓存参数混进所有版本的示例。
+
+课程用 `page1 init`、`page2 init` 验证 console 是否被清理。压缩完成后启动 Koa、访问生产产物，控制台不再出现这些初始化日志，同时 Vue 页面仍正常工作，才说明这项处理达到了目标。
+
+“删除 console”不应被解释成自动解决内存泄漏。这里的直接收益是去掉开发调试输出和不必要的信息暴露，应用是否存在内存泄漏还需要根据真实运行行为判断。
+
+## 再把 webpack runtime 独立出来
+
+除了第三方库和业务模块，webpack 还需要自己的运行时代码来组织模块加载。课程在已有分包基础上增加 `runtimeChunk`，让这部分代码单独输出。
+
+```js filename="app/webpack/config/webpack.base.js：补充 runtime" copy
+optimization: {
+  runtimeChunk: true,
+  splitChunks: {
+    // 沿用上一节的 vendor 与 common 规则
+  },
+}
+```
+
+`runtimeChunk: true` 会按配置生成相应运行时 chunk，不应一概写成所有入口都只产生一个固定名为 `runtime.js` 的文件。课程重点是观察 runtime 从入口业务中被拆出来，并由模板正确引用。
+
+多页面最后可能同时加载 runtime、vendor、common 和自己的 entry。增加一个产物不是凭空增加业务功能，而是改变运行时代码的组织方式。
+
+## 配置合并后必须检查规则是否重复
+
+环境配置继承基础规则，再添加 JavaScript 或 CSS 的处理规则时，要关注合并工具如何处理数组。同一文件如果误被两组不兼容的规则处理，可能产生与预期不同的结果。
+
+课程使用特定合并接口来处理这类组合。复盘时不应只看到 `merge` 这个词就假定所有工具和版本都有相同语义。需要关心最终配置长什么样，尤其是生产 CSS 已改为提取方式后，是否仍意外保留了冲突的注入规则。
+
+同理，`performance.hints: false` 只影响性能提示输出，它不是性能优化本身。关闭提示不能作为文件更小、构建更快的证据。
+
+## 本节中的排错顺序
+
+实作时先后出现过 `use` 的数组语法、`os.cpus` 的拼写、合并方法名称，以及 Vue 样式属性等问题。它们需要按报错阶段处理。
+
+配置对象语法不正确时，先修复 JavaScript；运行到工具调用时报错时，检查函数名和接口；真正解析组件时失败，再检查 `.vue` 中的 `lang="less"`、`scoped` 以及对应规则。不能因为最后要生成 CSS，就把所有错误都归给 CSS 插件。
+
+Babel 的补充说明也有一个重要边界：它按目标环境转换支持的语法，并不是把 Vue3 转成 Vue2，也不会把较新的运行时能力全部自动补齐。课程用语法版本的差异帮助理解编译，但不能把转换结果称为原写法的“真正源码”。
+
+## 本节小结
+
+本节形成了基础、开发、生产三层配置结构，并把生产构建的输出、清理、CSS 提取、并行处理、压缩和 runtime 拆分串起来。每一项配置都有可观察的产物或运行现象作为验证依据。
+
+开发环境的配置文件和命令已经准备好，下一节将实现 Express 开发服务、内存资源与 HMR 通道，让保存代码能够触发编译并更新浏览器。

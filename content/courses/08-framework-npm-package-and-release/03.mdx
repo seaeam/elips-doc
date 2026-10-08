@@ -11,18 +11,240 @@ description: "围绕「抽离并发布 npm 包（3）」整理的课程复盘笔
   title="抽离并发布 npm 包（3）"
 />
 
-## 本节定位
+> [!NOTE]
+>
+> 上一节已经让业务项目调用框架构建能力，但默认仍然主要编译框架自己的页面。本节继续开放使用方的独立页面入口，同时为框架别名增加命名空间，并允许使用方提供 webpack 扩展配置。
+>
+> 最后把具有具体业务含义的项目列表页面迁出框架，用真实迁移验证新入口机制。字幕中多段目录替换和页面演示被重复转写覆盖，下文只整理可确认的设计与实现关系，代码为简化示例。
 
-本节围绕「抽离并发布 npm 包（3）」展开，是「框架 npm 包抽象封装并发布」模块中的一个关键节点。复盘时先把它放回本章目标中理解：把课程中沉淀的框架能力从项目代码中抽离出来，形成可以安装、构建和发布的 npm 包。
+## 扩展能力要回到原来的架构图
 
-## 重点笔记
+课程先回顾框架开放的不同层级。使用者可以完全编写一张独立页面，也可以在 Dashboard 内新增自定义视图，还可以扩展搜索项、表单项和 Schema View 中的交互组件。
 
-- 把项目里的框架能力从业务代码中抽离出来，形成独立 npm 包。
-- 这一组课程验证前面沉淀的内核、工程和组件能力是否具备复用边界。
-- 每一节都要关注包边界、构建产物、依赖声明和发布流程。
+这些扩展不是同一个入口解决的。独立页面需要新的 webpack entry 和模板；Dashboard 自定义视图需要接入该模板的路由；字段组件需要进入相应组件注册表。本节先解决第一层，后面再逐项接入其余扩展。
 
-## 复盘清单
+| 扩展层级 | 使用方编写什么 | 框架需要提供什么 |
+| --- | --- | --- |
+| 独立页面 | Vue 根组件与 entry | 扫描业务入口并生成模板 |
+| Dashboard 自定义视图 | 子视图与路由声明 | 路由扩展机制 |
+| Schema View 交互组件 | 组件与注册配置 | 合并组件列表并调用协议 |
+| 搜索或表单字段 | 字段组件与类型映射 | 合并对应组件注册表 |
 
-- 本节抽离了哪些能力？
-- 包的入口、依赖和产物是否清晰？
-- 发布后其他项目如何安装和复用？
+这种分层对应框架的目标：通用部分留在包中，配置能表达的需求通过模型完成，配置无法覆盖的差异才写定制代码。业务项目不必重新实现整个 Dashboard 才能增加一个小功能。
+
+## 先从使用方想怎样调用开始
+
+课程在 demo 中创建一个最简单的 Vue 页面，再写一个 `entry.demo.js`。入口希望直接使用框架已经提供的 boot，而不需要复制 Element Plus、Pinia 和路由初始化代码。
+
+```vue filename="elpis-demo/app/pages/entry.demo/demo.vue" copy
+<template>
+  <main class="demo-page">
+    <h1>业务自定义页面</h1>
+    <p>这个页面来自 elpis-demo。</p>
+  </main>
+</template>
+```
+
+```js filename="elpis-demo/app/pages/entry.demo/entry.demo.js" copy
+import boot from "elpis-boot"
+import Demo from "./demo.vue"
+
+boot(Demo)
+```
+
+这里 `elpis-boot` 是框架构建提供的示意别名，不是需要单独安装的 npm 包。课程由这种目标用法反向检查当前构建配置，发现不仅要扫描业务入口，还要把框架公开给前端代码的引用名称整理清楚。
+
+## 框架别名需要体现归属
+
+原来在单项目中，`pages`、`common`、`widgets`、`store` 这样的名称足够直观。但使用方也会有自己的 pages 和 common，如果双方共享无前缀的别名，很容易不清楚一个 import 指向框架还是业务。
+
+课程为框架别名加上 `elpis` 前缀，使名称直接表达归属。这样业务项目可以保留自己的普通别名，也能显式引用框架能力。
+
+```js filename="框架内部别名示意" copy
+const path = require("path")
+const frameworkPages = path.resolve(__dirname, "../../pages")
+
+const alias = {
+  "elpis-pages": frameworkPages,
+  "elpis-common": path.join(frameworkPages, "common"),
+  "elpis-widgets": path.join(frameworkPages, "widgets"),
+  "elpis-store": path.join(frameworkPages, "store"),
+  "elpis-boot": path.join(frameworkPages, "boot.js"),
+}
+```
+
+字幕能确认为框架别名增加 elpis 前缀，但不稳定呈现每个拼写与分隔符；本页采用一致的连字符形式说明命名空间思想。实际课程仓库中应成套对齐 alias 与所有 import，不能只改一边。
+
+这类别名是编译期协议。代码能够使用 `elpis-boot`，前提是通过提供该 alias 的构建配置编译，不能脱离构建环境在任意 Node.js 文件中直接 require 这个名字。
+
+## 全局替换也需要验证过程
+
+课程没有只说一句“把别名都改掉”，而是展示了完整替换方法：先搜索旧名称，记录出现位置与数量，逐项修改，再搜索旧名称确认无遗漏，最后搜索新名称确认原来的引用都迁移过来。
+
+这个过程看起来机械，却能避免框架重构里常见的隐性遗漏。某个组件可能不是当前首页立即用到的，如果只打开首页验证，深层页面中的旧别名问题会暂时隐藏。
+
+```text filename="别名重构的检查顺序" copy
+搜索旧 import 前缀
+  -> 确认命中的是模块引用
+  -> 修改 alias 定义与调用方
+  -> 再搜索旧前缀
+  -> 搜索新前缀核对迁移
+  -> 构建并访问相关页面
+```
+
+搜索应尽量针对引用语句或明确前缀，而不是盲目替换所有包含 common 的文本。目录名、业务字段或普通文字不一定都是构建别名。
+
+命名空间的目标是长期可维护性，并不改变组件功能。课程把这种看似体力的工作放在 SDK 抽离阶段，是因为现在开始真正存在框架与使用方两套命名环境。
+
+## 使用方也需要自己的 webpack 配置
+
+框架别名解决了内置能力的归属，使用方仍可能需要为自己的业务目录设置 alias，或为额外文件类型添加构建规则。课程因此开放一个使用方配置文件，在基础配置中加载并合并。
+
+示例把约定文件写作 `app/webpack.config.js`，业务方可在其中定义自己的内容：
+
+```js filename="elpis-demo/app/webpack.config.js：示意约定" copy
+const path = require("path")
+
+module.exports = {
+  resolve: {
+    alias: {
+      business: path.resolve(__dirname, "pages"),
+    },
+  },
+}
+```
+
+框架读取这个文件，再与内部基础配置合并。课程用一个临时 alias 打印最终配置，确认业务对象确实进入了构建配置，而不只是文件在磁盘上存在。
+
+```js filename="框架加载业务构建配置：整理示意" copy
+const fs = require("fs")
+const path = require("path")
+const merge = require("webpack-merge")
+
+const configPath = path.resolve(process.cwd(), "app/webpack.config.js")
+const businessConfig = fs.existsSync(configPath)
+  ? require(configPath)
+  : {}
+
+module.exports = merge.smart(frameworkBaseConfig, businessConfig)
+```
+
+这里用存在性判断表达“业务扩展可选”。课程也展示了尝试加载与兜底的思路。需要注意，只对文件缺失提供空配置；文件确实存在但写错语法时，不应把所有错误吞掉后继续声称加载成功。
+
+## 合并配置是一个真实的扩展边界
+
+开放业务配置后，使用方可以在框架默认能力上补充定制内容。它同时意味着框架需要清楚说明合并规则：对象可能按键组合，数组如何处理则取决于所用工具和版本。
+
+因此不能笼统理解为“业务配置永远把框架整个对象完全替换掉”，也不能认为任何规则叠加都不会冲突。一个业务 Loader 如果与内置规则同时匹配同一文件，仍需要检查最终配置是否符合预期。
+
+本节演示 alias 的加入，是一个容易观察的最小验证。打印 `resolve.alias` 能确认来源合并；完整构建则验证这些路径真的可以使用。看到临时 demo 别名出现后，课程再删除调试打印，避免长期留下无关输出。
+
+> [!TIP]
+>
+> 扩展机制要用一个小而可区分的例子验证。这里用单独 alias 和独立 Demo 页面，能够直接判断配置来自业务项目，而不会与框架已有页面的成功混淆。
+
+## 入口扫描扩展为两处
+
+上一节把内置 entry 扫描改成框架路径，当前还需再扫描业务 `app/pages`。两个来源使用同样的文件约定，进入同一套 entry 与模板生成逻辑。
+
+```js filename="webpack.base.js：框架与业务入口" copy
+const glob = require("glob")
+const path = require("path")
+const HtmlWebpackPlugin = require("html-webpack-plugin")
+
+const frameworkPages = path.resolve(__dirname, "../../pages")
+const businessPages = path.resolve(process.cwd(), "app/pages")
+const template = path.resolve(__dirname, "../../view/entry.tpl")
+const outputRoot = path.resolve(process.cwd(), "app/public/dist")
+
+const entries = {}
+const htmlPlugins = []
+
+function addEntry(filePath) {
+  const name = path.basename(filePath, ".js")
+  entries[name] = filePath
+  htmlPlugins.push(new HtmlWebpackPlugin({
+    filename: path.join(outputRoot, `${name}.tpl`),
+    template,
+    chunks: [name],
+  }))
+}
+
+for (const sourceRoot of [frameworkPages, businessPages]) {
+  glob.sync(path.join(sourceRoot, "**/entry.*.js")).forEach(addEntry)
+}
+```
+
+这与服务端双来源 Loader 很相似：找到两处文件，复用同一处理函数。但服务端把模块挂到 app，前端构建把文件变成 entry 和模板插件，两者最终产物不同。
+
+所有模板仍输出到业务项目，不能因为入口来自框架，就又把该入口的产物写回框架目录。输出的归属由当前应用决定。
+
+## 业务入口加入后还要检查转换范围
+
+入口能够被发现，只完成了第一步。业务组件仍要经过 Vue、JavaScript、样式和资源规则。前面为提高构建效率而限定的 `include`，在支持业务源码后需要覆盖两套页面目录。
+
+```js filename="JavaScript 转换范围示意" copy
+{
+  test: /\.js$/,
+  include: [frameworkPages, businessPages],
+  use: require.resolve("babel-loader"),
+}
+```
+
+这里的代码是对完整链路的整理，不声称字幕中重复段落提供了逐字相同实现。它说明一个必须保持的一致性：框架宣称支持某处源码，就要让扫描、解析和依赖引用共同覆盖该位置。
+
+入口名的唯一性仍然重要。因为模板名和 entry 键都由文件名生成，框架与业务如果同名，简单赋值会出现覆盖，而模板插件还可能产生重复输出。使用方新增页面时应采用不冲突的入口名，并根据框架约定处理替换需求。
+
+## 独立页面怎样被服务端访问
+
+业务写好 `entry.demo.js` 后，构建系统生成 `entry.demo.tpl` 以及它所需的资源。Koa 原有页面路由只要能够按页面名选择模板，就能访问这张新页面，不需要专门为每一张简单模板重新编写整套渲染流程。
+
+```text filename="自定义页面完整链路" copy
+elpis-demo/app/pages/entry.demo/entry.demo.js
+  -> 引用 elpis boot 与业务 Vue 组件
+  -> 框架扫描到业务 entry
+  -> 生成业务项目 dist/entry.demo.tpl
+  -> Koa 根据页面路由选择该模板
+  -> 浏览器执行该入口并显示 Demo
+```
+
+这里复用了框架 boot、模板骨架、Loader 和渲染 Controller，业务只提供差异组件与入口。这个闭环就是当前扩展能力的实际收益。
+
+验证时既要打开新 Demo，也要回到原来的 Dashboard 和项目页面，确认重命名、配置合并和双来源扫描没有破坏已有入口。
+
+## 把项目列表迁出框架
+
+课程随后检查 `project-list`。它虽然在前面用于展示领域模型入口，但页面布局、名称和具体呈现方式都带有业务特点。框架可以保留获取项目模型等通用接口，却不一定要强制所有使用者采用同一张业务列表页面。
+
+因此课程把该页面和入口迁移到 `elpis-demo`，更新它对 boot 和公共请求方法的引用，使用新的 elpis 命名空间。框架内部逐渐只保留通用模板、组件、工具和状态能力。
+
+这次迁移比另写一个空白 Demo 更有意义。一个真实页面会引用公共请求、模型接口和样式，它迁出后仍能运行，说明公开能力确实覆盖了真实消费场景。
+
+迁移不能停留在复制。若业务项目已经拥有页面，而框架中还保留同名入口，双来源扫描就可能重复构建同一名称。因此确认新位置运行后，要让原位置退出入口集合。
+
+## 从目录变化看职责变化
+
+迁移后的目录大致呈现以下关系：
+
+```text filename="框架与业务前端的职责示意" copy
+elpis/app/pages
+├── boot.js
+├── common
+├── store
+├── widgets
+└── dashboard 及通用模板能力
+
+elpis-demo/app/pages
+├── entry.demo
+└── project-list 及该项目其他定制页面
+```
+
+具体文件夹名称以项目约定为准，这里展示的是职责。判断某个页面该放哪，关键是它是否表达某个业务应用的产品选择，还是多个应用共同需要的稳定能力。
+
+把代码移出框架不是削弱框架。恰恰相反，当框架不再依赖内置业务示例也能支持应用运行时，才更接近一套可复用 SDK。
+
+## 本节小结
+
+本节为框架前端引用增加命名空间，允许业务项目补充 webpack 配置，并把入口扫描扩大到框架与使用方两处。独立页面可以通过框架 boot 启动，再由统一工程和 Koa 模板链路交付。
+
+项目列表迁移验证了这套能力能够支撑真实业务。下一节继续开放 Dashboard 内部路由和组件注册，并处理可选业务文件不存在时的构建问题。

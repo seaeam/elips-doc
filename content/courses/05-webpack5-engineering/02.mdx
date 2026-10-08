@@ -11,18 +11,334 @@ description: "围绕「webpack5 前端工程化搭建（1）」整理的课程�
   title="webpack5 前端工程化搭建（1）"
 />
 
-## 本节定位
+> [!NOTE]
+>
+> 本节把上一节的工程化设计变成第一条可执行链路：创建两个 Vue 页面，编写 webpack 基础配置和构建入口，把页面编译到 `app/public/dist`，再让 Koa 渲染生成的模板。
+>
+> 重点是分清三个入口：Vue 应用的启动入口、webpack 的构建入口，以及 Koa 接收页面请求的入口。它们各自承担不同工作，通过产物文件和模板引用连接在一起。
+>
+> 以下代码是依据课程讲解整理的简化示例，用于复盘各项配置的关系；路径保持课程项目的组织方式，插件参数需与课程使用的依赖版本对应。
 
-本节围绕「webpack5 前端工程化搭建（1）」展开，是「Webpack5 工程化建设」模块中的一个关键节点。复盘时先把它放回本章目标中理解：建立前端工程体系，为多入口、构建、开发调试和后续模型渲染提供基础设施。
+## 先准备能够验证的页面
 
-## 重点笔记
+课程先从 `develop` 创建前端工程化功能分支，再开始搭建。第一步不是写配置，而是建立两个可以区分的测试页面。
 
-- 把工程化设计落到具体 Webpack 配置、目录结构和开发流程中。
-- 这一组课程共同完成前端工程底座，为模型渲染和组件体系提供承载环境。
-- 每次搭建都要关注新增配置解决了什么问题，以及是否影响后续扩展。
+如果只有一个静态标题，即使页面能打开，也很难判断 Vue 是否正常初始化、样式是否经过处理、多页面是否引用了各自的入口。因此两个测试页都包含标题、输入框、响应式文本和初始化日志，并用不同颜色区分。
 
-## 复盘清单
+```vue filename="app/pages/entry.page1/page1.vue" copy
+<template>
+  <main class="page">
+    <h1>Page 1</h1>
+    <input v-model="content" />
+    <p>{{ content }}</p>
+  </main>
+</template>
 
-- 本节新增了哪些工程能力？
-- 这些配置在开发态和构建态分别有什么作用？
-- 当前工程结构是否方便后续接入 Vue3 与模型系统？
+<script setup>
+import { ref } from "vue"
+
+const content = ref("")
+console.log("page1 init")
+</script>
+
+<style lang="less" scoped>
+.page {
+  h1 {
+    color: red;
+  }
+}
+</style>
+```
+
+第二个页面使用相同结构，但标题改为 `Page 2`，日志改为 `page2 init`，颜色改为蓝色。这里的响应式输入能够验证 JavaScript 确实在执行；嵌套 Less 和 `scoped` 样式则用于验证样式转换链路。
+
+文件在磁盘上存在，不代表 Vue 会自动运行它。还需要一个启动脚本，把组件交给 `createApp`，再挂载到模板中的 DOM 节点。
+
+```js filename="app/pages/entry.page1/entry.page1.js" copy
+import { createApp } from "vue"
+import Page1 from "./page1.vue"
+
+const app = createApp(Page1)
+app.mount("#root")
+```
+
+第二个入口启动 `Page2`，也挂载到 `#root`。两个页面拥有各自独立的文档，所以使用相同的挂载节点名称不会冲突。重要的是每个入口都要和自己的根组件对应。
+
+## 配置文件和执行文件分开
+
+课程建立 `app/webpack` 目录，把基础配置放在 `config/webpack.base.js`，把运行构建的代码放在 `build.js`。配置描述“如何构建”，执行文件负责“启动构建并报告结果”。后面再从基础配置派生开发环境和生产环境配置。
+
+```text filename="本节新增目录" copy
+app
+├── pages
+│   ├── entry.page1
+│   │   ├── entry.page1.js
+│   │   └── page1.vue
+│   └── entry.page2
+│       ├── entry.page2.js
+│       └── page2.vue
+├── view
+│   └── entry.tpl
+├── webpack
+│   ├── build.js
+│   └── config
+│       └── webpack.base.js
+└── public
+    └── dist
+```
+
+基础配置先包含六块内容。课程先写注释和框架，再逐项填入细节，这样每段配置都能对照上一节的设计图。
+
+| 配置项 | 在链路中负责的事情 |
+| --- | --- |
+| `entry` | 找到各页面的 JavaScript 入口 |
+| `module.rules` | 根据文件类型选择 Loader |
+| `output` | 决定资源产物的名称和输出位置 |
+| `resolve` | 处理模块查找、后缀与路径别名 |
+| `plugins` | 接入组件解析、常量定义和模板生成等能力 |
+| `optimization` | 放置后续分包、压缩等优化策略 |
+
+当前先跑通完整链路，分包和环境拆分在后续课继续完成。因此本节产物主要按照生产构建的落盘方式处理，不能看到 `prod` 目录就以为本节已经完成全部生产优化。
+
+## 用 Node.js API 启动 webpack
+
+webpack 配置对象本身不会自动执行。构建脚本读取配置，然后调用 `webpack(config, callback)`。
+
+```js filename="app/webpack/build.js" copy
+const webpack = require("webpack")
+const webpackConfig = require("./config/webpack.base")
+
+console.log("\nBuilding...\n")
+
+webpack(webpackConfig, (error, stats) => {
+  if (error) {
+    console.error(error)
+    process.exitCode = 1
+    return
+  }
+
+  console.log(stats.toString({
+    colors: true,
+    modules: false,
+    children: false,
+    chunks: false,
+    chunkModules: true,
+  }))
+
+  if (stats.hasErrors()) {
+    process.exitCode = 1
+  }
+})
+```
+
+课程着重展示了错误输出和 `stats.toString`。回调里的 `error` 用于报告无法正常启动或执行的错误；构建模块时产生的诊断，还要从编译统计结果里看。上例补充了退出码，便于明确区分成功和失败。
+
+统计选项主要决定日志显示方式，不改变模块如何编译。关闭大量模块、子编译和 chunk 细节，可以让当前阶段更容易看到关键报错；需要分析产物时，再有针对性地打开相应信息。
+
+```bash filename="执行第一次构建" copy
+node app/webpack/build.js
+```
+
+构建脚本运行在 Node.js 中，它与 Koa 请求上下文不同，因此这里直接使用控制台打印，而不是使用业务请求里的日志对象。
+
+## 多入口与输出命名的对应关系
+
+多页面应用可以把 `entry` 写成对象。对象的键是入口名称，值是入口源文件。产物命名中的 `[name]` 会使用这个入口名称。
+
+```js filename="app/webpack/config/webpack.base.js：入口和产物" copy
+const path = require("path")
+const root = process.cwd()
+
+const entry = {
+  "entry.page1": path.resolve(
+    root, "app/pages/entry.page1/entry.page1.js"
+  ),
+  "entry.page2": path.resolve(
+    root, "app/pages/entry.page2/entry.page2.js"
+  ),
+}
+
+const output = {
+  filename: "js/[name]_[chunkhash:8].bundle.js",
+  path: path.resolve(root, "app/public/dist/prod"),
+  publicPath: "/dist/prod/",
+  crossOriginLoading: "anonymous",
+}
+```
+
+`path` 是构建进程写文件的磁盘位置，`publicPath` 是注入页面或运行时代码时使用的资源 URL 前缀。它们不能简单地写成同一个字符串。上例假设静态服务将 `app/public` 暴露为 URL 根；如果前面项目把它挂载在 `/public`，浏览器前缀也要相应写成 `/public/dist/prod/`。
+
+课程在这里使用入口名、八位 chunk hash 和 `.bundle.js` 的组合，以便区分不同入口和不同构建内容。最终文件名不应由页面开发者手写进模板，否则下一次 hash 变化就会产生旧引用。
+
+`crossOriginLoading` 是加载脚本时的属性设置，不等同于替服务器配置 CORS 响应头。开发服务的跨域处理会在后面单独出现，复盘时要把浏览器加载属性与服务端响应设置分开。
+
+## Loader 把源文件接入依赖图
+
+入口引入 Vue 组件后，webpack 还需要知道怎样理解 `.vue` 文件。组件继续引入样式、图片、字体时，也需要对应规则。
+
+```js filename="app/webpack/config/webpack.base.js：解析规则" copy
+const rules = [
+  {
+    test: /\.vue$/,
+    use: "vue-loader",
+  },
+  {
+    test: /\.js$/,
+    include: path.resolve(root, "app/pages"),
+    use: "babel-loader",
+  },
+  {
+    test: /\.(png|jpe?g|gif)(\?.*)?$/i,
+    use: {
+      loader: "url-loader",
+      options: { limit: 300, esModule: false },
+    },
+  },
+  {
+    test: /\.css$/,
+    use: ["style-loader", "css-loader"],
+  },
+  {
+    test: /\.less$/,
+    use: ["style-loader", "css-loader", "less-loader"],
+  },
+  {
+    test: /\.(eot|svg|ttf|woff2?)(\?.*)?$/i,
+    use: "file-loader",
+  },
+]
+```
+
+这里保留课程使用的 Loader 方案。图片规则中的 `limit: 300` 是演示配置，不能理解为所有项目都应该采用同一个阈值。真实项目需要结合图片体积和引用方式决定。
+
+样式 Loader 数组的处理方向需要特别留意。Less 先交给 `less-loader` 转换，再经过 `css-loader` 处理 CSS 模块关系，最后由 `style-loader` 注入页面。它们不是三种任选其一的替代工具，而是同一条处理链上承担不同职责的步骤。
+
+JavaScript 的 `include` 限制了 Babel 处理范围。课程只转换 `app/pages` 下的业务代码，用来减少不必要的工作。后面把框架移动到 npm 包时，这个范围会成为需要重新检查的地方：目录改变以后，原来合适的路径限制不一定仍然覆盖所有源文件。
+
+> [!IMPORTANT]
+>
+> Loader 解决文件转换，`resolve` 解决模块在哪里。路径找不到与文件解析失败是不同的问题，应根据错误所处阶段分别排查，不能只要构建报错就不停增加 Loader。
+
+## 为开发者提供稳定的引用方式
+
+课程在 `resolve` 中设置后缀和别名，让代码不必反复写很长的相对路径。
+
+```js filename="app/webpack/config/webpack.base.js：模块查找" copy
+const resolve = {
+  extensions: [".js", ".vue", ".less", ".css"],
+  alias: {
+    pages: path.resolve(root, "app/pages"),
+  },
+}
+```
+
+有了后缀规则，`import Page1 from "./page1"` 可以按约定尝试匹配文件。有了 `pages` 别名，公共启动脚本可以通过 `pages/boot` 访问。别名是构建系统解释的模块标识，不是浏览器真实发出的 HTTP 地址。
+
+后缀顺序也有意义。同一个目录存在同名 `.js` 和 `.vue` 时，不写后缀就会受查找顺序影响。因此省略后缀是一种开发便捷性，不代表所有场景都应该省略明确的文件类型。
+
+## VueLoaderPlugin 与编译常量
+
+只添加 `vue-loader` 还不够。课程同时注册 `VueLoaderPlugin`，让已经定义的其他规则能够作用到 Vue 单文件组件中的脚本和样式块。
+
+```js filename="Vue 相关插件示意" copy
+const webpack = require("webpack")
+const { VueLoaderPlugin } = require("vue-loader")
+
+const plugins = [
+  new VueLoaderPlugin(),
+  new webpack.DefinePlugin({
+    __VUE_OPTIONS_API__: true,
+    __VUE_PROD_DEVTOOLS__: false,
+    __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: false,
+  }),
+]
+```
+
+这些常量在编译时决定 Vue 某些分支是否保留，课程开启 Options API 支持，并关闭相应生产调试信息。它们不是挂在业务组件实例上的响应式变量。
+
+课程还介绍了 `ProvidePlugin` 作为统一提供第三方模块引用的方式。复盘时要区分它与真正的全局赋值：`ProvidePlugin` 在模块中遇到指定标识时提供依赖，不是只要写了一条映射，就一定在所有情况下创建了可随意访问的 `window` 属性。后面使用 axios 等模块时，显式导入也能表达相同依赖关系。
+
+## 为什么还要生成模板
+
+到这里，入口经过 Loader 能够生成 JavaScript，但 Vue 的 `mount("#root")` 需要一个真实 DOM 节点。Koa 也需要一份可以渲染的模板。这两者由 `app/view/entry.tpl` 接起来。
+
+```html filename="app/view/entry.tpl：结构示意" copy
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>elpis</title>
+  </head>
+  <body style="margin: 0">
+    <div id="root"></div>
+  </body>
+</html>
+```
+
+这个片段只展示页面骨架。课程同时保留前面服务端模板已有的动态数据注入、公共样式和图标等内容。它们仍然属于服务端渲染链路，不应因为接入 webpack 就被删掉。
+
+`HtmlWebpackPlugin` 用这个公共模板生成每个入口自己的产物模板，并把该入口需要的资源引用注入进去。
+
+```js filename="每个页面对应一个 HtmlWebpackPlugin" copy
+const HtmlWebpackPlugin = require("html-webpack-plugin")
+
+plugins.push(
+  new HtmlWebpackPlugin({
+    filename: path.resolve(root, "app/public/dist/entry.page1.tpl"),
+    template: path.resolve(root, "app/view/entry.tpl"),
+    chunks: ["entry.page1"],
+  }),
+  new HtmlWebpackPlugin({
+    filename: path.resolve(root, "app/public/dist/entry.page2.tpl"),
+    template: path.resolve(root, "app/view/entry.tpl"),
+    chunks: ["entry.page2"],
+  })
+)
+
+module.exports = {
+  entry,
+  module: { rules },
+  output,
+  resolve,
+  plugins,
+  optimization: {},
+}
+```
+
+两个插件使用同一份模板，但是 `filename` 和 `chunks` 不同。`chunks` 的名称必须与 `entry` 对象中的键对应，这样 Page1 的模板才会引用 Page1 的启动代码。
+
+模板中的业务数据占位符还会交给服务端模板引擎处理。因此“构建模板”和“请求到来后渲染模板”是两个阶段。构建阶段主要确定资源引用；运行阶段再注入请求相关数据。
+
+## 接回 Koa 的页面 Controller
+
+原来的 Controller 指向 `public/output`，现在产物放在 `public/dist`，所以渲染路径也要相应调整。
+
+```text filename="请求与构建的衔接" copy
+访问 /view/page1
+  -> 页面路由
+  -> 页面 Controller
+  -> 选择 dist/entry.page1.tpl
+  -> 模板引擎注入运行时数据
+  -> 返回 HTML
+  -> 浏览器加载 entry.page1 对应的 bundle
+  -> createApp(Page1).mount("#root")
+```
+
+Koa 不需要理解 `.vue` 文件。它只需要能够定位已经构建好的模板；浏览器也不需要读取源码目录，而是下载构建产物并执行。
+
+## 如何判断第一次构建真正成功
+
+课程先运行构建，再查看 `dist`。两个入口应各自产生 JavaScript，两个模板应分别引用正确的入口产物。删除整个产物目录后再次构建，应能重新生成相同结构，证明文件来自构建流程，而非残留的手写文件。
+
+实际书写过程中出现过 `publicPath`、`extensions` 等拼写问题。webpack 的配置校验会提示未知配置项，这类错误应直接回到对应配置键修正。代码能开始编译以后，再看 Vue、样式或资源解析的具体错误。
+
+当暂未设置 `mode` 时，课程看到默认模式提示，随后将在环境拆分中显式指定。提示与失败要区分，但也不应忽略提示透露的实际构建模式。
+
+最后启动 Koa，访问两张页面。要同时观察标题和颜色是否区分、输入内容是否同步显示、初始化日志是否对应当前页面。这些小验证覆盖了入口、组件、样式、资源引用和 Vue 挂载几个环节。
+
+## 本节小结
+
+本节建立了第一条完整的前端工程链路：两个 Vue 页面通过各自入口启动，webpack 使用规则解析文件并生成资源，`HtmlWebpackPlugin` 为每个入口生成模板，Koa 再读取模板返回页面。
+
+这时 entry 和模板插件还是手工写了两份，已经足以验证机制。下一节会把这种重复配置变成基于目录约定的自动发现，并进一步拆分第三方包、公共包和入口包，让这套工程真正适合框架扩展。

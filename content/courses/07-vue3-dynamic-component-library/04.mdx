@@ -1,6 +1,6 @@
 ---
 title: 动态组件 - CreateForm
-description: "围绕「动态组件 - CreateForm」整理的课程复盘笔记，聚焦动态组件机制和表单体系复用。"
+description: "将 SchemaForm 接入 CreateForm，通过 POST 新增资源与 command 刷新列表，并复盘配置筛选、动态渲染和校验联调。"
 ---
 
 # 动态组件 - CreateForm
@@ -11,18 +11,321 @@ description: "围绕「动态组件 - CreateForm」整理的课程复盘笔记�
   title="动态组件 - CreateForm"
 />
 
-## 本节定位
+> [!NOTE]
+>
+> 本节把已经完成的 SchemaForm 装进 CreateForm，串起“点击新增 → 打开抽屉 → 填写并校验 → POST 提交 → 关闭抽屉 → 刷新列表”的完整流程。
+>
+> 另一个重点是统一动态组件的对外通信：组件通过 `command` 通知 SchemaView，由页面容器调度其他区域。课程也花了较多时间逐层排查空表单、字段校验和请求问题，这些过程比单看最终代码更能说明各层职责。
+>
+> 代码为按课堂思路整理的简化示例。字幕在部分校验调试处出现长段重复，无法确认的具体修复不作源码还原。
 
-本节围绕「动态组件 - CreateForm」展开，是「Vue3 动态组件库」模块中的一个关键节点。复盘时先把它放回本章目标中理解：把领域模型能力沉淀为可复用组件，覆盖表单、创建、编辑、详情等高频业务场景。
+## CreateForm 复用的是字段能力，自己承担的是业务流程
 
-## 重点笔记
+SchemaForm 已经可以根据 DTO Schema 渲染字段，也能通过 `validate()` 和 `getValue()` 对外提供统一能力。因此 CreateForm 不需要知道 Input 如何处理 blur、Select 如何构造 enum，也不需要再次编写字段约束。
 
-- 把新增业务数据的流程沉淀成可复用表单能力。
-- CreateForm 复用 SchemaForm，同时补齐创建场景的默认值、提交和反馈流程。
-- 后续 EditForm 会继续处理存量数据回填和更新逻辑。
+它负责的事情更加明确：读取自己对应的组件配置、打开抽屉、展示标题和保存按钮、请求新增资源，并把保存结果通知页面。
 
-## 复盘清单
+```mermaid
+sequenceDiagram
+  participant User as 用户
+  participant View as SchemaView
+  participant Create as CreateForm
+  participant Form as SchemaForm
+  participant API as 资源接口
+  participant Table as TablePanel
+  User->>View: 点击配置了 showComponent 的新增按钮
+  View->>Create: show()
+  Create->>Form: 传入 createForm 对应 Schema
+  User->>Create: 点击保存
+  Create->>Form: validate()
+  Form-->>Create: 返回校验结果
+  Create->>Form: getValue()
+  Create->>API: POST 创建资源
+  API-->>Create: 返回创建结果
+  Create-->>View: command / loadTableData
+  View->>Table: loadTableData()
+```
 
-- 创建场景和通用表单有什么差异？
-- 默认值和提交接口如何配置？
-- 创建成功后的反馈和跳转如何处理？
+这条链路中存在三种不同的“动作”：按钮配置的 eventKey、业务组件公开的 show 方法，以及业务组件向外发出的 command。它们分别服务于事件入口、实例调用和业务结果通知，不能混为一个变量。
+
+## 先取得 CreateForm 需要的上下文
+
+SchemaView 前面已经通过 `schemaViewData` 提供了资源 API 和组件集合。本节的 CreateForm 注入 `api`、`components`，再根据自身名称 `createForm` 取出对应的 `{ schema, config }`。
+
+`schema` 决定字段结构，`config` 决定这个业务组件的外观与行为。当前用到的配置包括 title 和 saveButtonText。表单是否显示，则是 CreateForm 自己的运行状态 isShow。
+
+```js filename="CreateForm 状态与打开方法.js" copy
+import { inject, ref } from "vue";
+
+const name = "createForm";
+const { api, components } = inject("schemaViewData");
+
+const isShow = ref(false);
+const title = ref("");
+const saveButtonText = ref("");
+const formSchema = ref({});
+const schemaFormRef = ref(null);
+const loading = ref(false);
+
+function show() {
+  const component = components.value[name];
+  if (!component) return;
+
+  formSchema.value = component.schema;
+  title.value = component.config.title;
+  saveButtonText.value = component.config.saveButtonText;
+  isShow.value = true;
+}
+
+defineExpose({ name, show });
+```
+
+名称必须与三个地方一致：componentConfig 的 key、动态组件注册表的 key，以及按钮 eventOption 指定的 componentName。组件的公开 name 是调度协议的一部分，不是仅供开发工具展示的 Vue 组件选项名称。
+
+CreateForm 此时不使用行数据。新增按钮通常放在表格上方，创建的是一条新记录，不需要先从当前行取主键。上一节统一的 show 协议允许携带数据，不代表每一种组件都要保存一个没有用途的 rowData 参数。
+
+## 抽屉的三个区域各自绑定什么
+
+课程继续使用 Element Plus Drawer，方向为从右侧打开。抽屉的 header 展示配置标题，default 放 SchemaForm，footer 放保存按钮。字段编辑内容统一交给 SchemaForm。
+
+```vue filename="CreateForm 抽屉结构.vue" copy
+<template>
+  <el-drawer
+    v-model="isShow"
+    direction="rtl"
+    destroy-on-close
+  >
+    <template #header>
+      <h2>{{ title }}</h2>
+    </template>
+
+    <div v-loading="loading">
+      <SchemaForm
+        ref="schemaFormRef"
+        :schema="formSchema"
+      />
+    </div>
+
+    <template #footer>
+      <el-button type="primary" :loading="loading" @click="save">
+        {{ saveButtonText }}
+      </el-button>
+    </template>
+  </el-drawer>
+</template>
+```
+
+这段模板与上面的状态代码、后面的 save 方法属于同一个组件，并需要导入公共 SchemaForm。新增场景不传 model，由各字段使用自己的 default。之后 EditForm 会把接口返回的 model 传入同一个 SchemaForm，形成真正的复用。
+
+`destroy-on-close` 让抽屉关闭后销毁其内容，下一次打开重新创建字段组件，避免上一轮输入残留。不过业务组件仍应明确自己的状态初始化逻辑，不能把每一种状态复位都寄托在 UI 组件销毁行为上。
+
+loading 一方面告诉用户请求正在处理，另一方面参与提交控制。课程在下一节回看新增代码时补充了重复提交防护，下面的整理版本将这项已讲到的修正一并纳入。
+
+## 新增为什么只需要一条资源 API
+
+之前 tableSchema 使用资源 API 获取列表，删除按钮也使用同一资源约定。本节把新增接上：通过 HTTP method 表达动作，而不是让 Schema 必须为每一种操作再配置一个独立地址。
+
+| 操作 | 课堂使用的方法 | 数据用途 |
+| --- | --- | --- |
+| 获取列表或单条数据 | GET | 查询参数决定列表条件或资源标识 |
+| 新增 | POST | body 携带表单数据 |
+| 修改 | PUT | body 携带主键和修改内容 |
+| 删除 | DELETE | 按协议传递资源标识 |
+
+列表使用额外的 `/list` 路径是这个项目的接口约定，不是所有 API 都必须如此设计。这里的要点是：在当前 CRUD 模型下，一个 schema API 可以让表格、新增、修改、删除围绕同一资源协作。
+
+如果将来某个动态组件处理的不是通用 CRUD，而是复杂业务动作，可以通过该组件的 config 扩展自己的接口配置。课程把这作为扩展方向，没有因此给现有 CreateForm 增加大量尚未使用的配置项。
+
+## 保存流程按明确的顺序推进
+
+保存时，先防止重复触发，再判断表单实例是否可用，接着执行校验。只有校验通过才开启 loading、读取字段值并请求 API。
+
+成功后给出提示、关闭抽屉，再通知页面刷新表格。失败时保留抽屉和当前输入，让用户能够继续处理。请求结束必须释放 loading，不能因为一次异常把保存入口永久锁住。
+
+```js filename="CreateForm 保存逻辑.js" copy
+import { ElMessage } from "element-plus";
+import curl from "@/utils/curl";
+
+const emit = defineEmits(["command"]);
+
+async function save() {
+  if (loading.value) return;
+  const form = schemaFormRef.value;
+  if (!form || !form.validate()) return;
+
+  loading.value = true;
+  try {
+    const result = await curl({
+      method: "POST",
+      url: api.value,
+      data: form.getValue(),
+    });
+
+    if (!result?.success) return;
+    ElMessage.success("新增成功");
+    isShow.value = false;
+    emit("command", "loadTableData");
+  } finally {
+    loading.value = false;
+  }
+}
+```
+
+示例中的 curl 路径是说明性的，调用语义沿用课程封装：method 指定方法，url 指定地址，data 是提交数据，返回值包含 success。异常提示应接入项目现有请求错误处理；finally 在这里承担状态恢复，不等于吞掉异常。
+
+对于新增成功的判断，课程后续指出不一定要强求响应包含 data。创建接口可能只返回 success；而修改表单加载详情时必须有 data 才能回显。这两种场景的业务需求不同，不能把所有请求都套成同一个 `success && data` 条件。
+
+`getValue()` 的返回结果已经由字段组件按 schemaKey 合并。CreateForm 不需要把 inputValue、numberValue、selectValue 再手工拼一次，否则增加字段后仍要修改业务表单，前面的 Schema 驱动就失去了意义。
+
+## 用 command 统一动态组件向外的通知
+
+CreateForm 完成新增后，需要让 TablePanel 重新请求列表。但它不应该直接找到页面某个表格实例，再深入调用其内部方法。
+
+课程把动态组件向外的通知统一为 `command` 事件。组件发出动作名称，SchemaView 接收后决定如何调度页面其他区域。
+
+```vue filename="SchemaView 接收动态组件事件.vue" copy
+<component
+  :is="componentRegistry[componentName]"
+  v-for="componentName in Object.keys(components)"
+  :key="componentName"
+  :ref="instance => setComponentRef(componentName, instance)"
+  @command="onComponentCommand"
+/>
+```
+
+```js filename="SchemaView command 分发.js" copy
+function onComponentCommand(command) {
+  switch (command) {
+    case "loadTableData":
+      tablePanelRef.value?.loadTableData();
+      break;
+    default:
+      console.warn("未处理的动态组件 command:", command);
+  }
+}
+```
+
+如果每个业务组件都临时定义 submit、change、update、refresh 等一批含义相近的事件，SchemaView 就需要逐个了解它们。统一事件入口后，新增一种组件可以继续复用页面支持的 command。
+
+这并不是说所有组件所有交互都只能塞成字符串。当前课堂只需要“刷新表格”这个无额外参数的动作，因此用简单命令即可。协议应围绕实际需求扩展，不必为了可能的复杂度先设计一个大型消息系统。
+
+同样，command 的名称并不会自动变成方法调用。SchemaView 中必须有明确处理逻辑；组件已经 emit，但页面没有接收或没有对应分支时，抽屉可能关闭成功，列表却仍停留在旧数据。
+
+## 以商品模型验证字段筛选
+
+联调时，课程在模型中配置商品名称、价格、库存等字段，分别尝试 Input、InputNumber 和 Select。字段是否出现在新增表单中，由是否配置 `createFormOption` 决定。
+
+主键在表格中可能必不可少，但新增时一般由服务端产生，因此可以不写 createFormOption。商品名称需要填写，则写入根 Schema 的 required 数组，由 useSchema 转成字段 option.required。
+
+```js filename="商品新增模型配置示意.js" copy
+const model = {
+  api: "/api/project/product",
+  schema: {
+    type: "object",
+    required: ["productName"],
+    properties: {
+      productId: {
+        type: "string",
+        label: "商品 ID",
+        tableOption: { visible: true },
+      },
+      productName: {
+        type: "string",
+        label: "商品名称",
+        createFormOption: { comType: "input" },
+      },
+      price: {
+        type: "number",
+        label: "价格",
+        createFormOption: { comType: "inputNumber", default: 30 },
+      },
+      stock: {
+        type: "number",
+        label: "库存",
+        createFormOption: {
+          comType: "select",
+          enumList: [
+            { label: "100 件", value: 100 },
+            { label: "1000 件", value: 1000 },
+          ],
+        },
+      },
+    },
+  },
+  componentConfig: {
+    createForm: {
+      title: "新增商品",
+      saveButtonText: "保存商品",
+    },
+  },
+};
+```
+
+这段配置仅展示本节相关部分，字段示例值用于说明协议，不代表课程真实业务数据。按钮中的 `showComponent` 配置和前面的注册机制保持一致。
+
+库存用 Select 是为了验证枚举控件能接入表单，并不表示现实中的库存只能选两个固定值。下一节回显真实库存时，正是这个演示配置暴露了枚举范围与业务数据不一致的问题，随后会调整控件。
+
+## 空表单不要从最底层开始猜
+
+课程第一次联调并不是一步成功。抽屉能显示，但内部没有字段。此时按钮、show 和抽屉本身已经有证据表明可用，应继续看 SchemaForm 的输入。
+
+排查顺序是沿数据流逆向追踪：
+
+1. 确认 SchemaForm 已经挂载，而不是只看见抽屉壳。
+2. 查看传入的 schema.properties，发现字段没有生成。
+3. 查看 CreateForm 读取到的 `components.createForm.schema`，仍为空。
+4. 回到 useSchema 的 `buildDtoSchema`，检查使用哪个组件名提取字段 Option。
+5. 发现模型中的表单 Option 名称拼写不一致，导致筛选不到任何字段。
+
+这里 Hook 按 `${componentName}Option` 读取字段配置。componentName 是 createForm，那么键名就必须准确写为 createFormOption。配置里多一个或少一个字符，不会被框架猜测修正，只会被当成“这个字段不参与该组件”。
+
+修正 DTO 后仍需继续观察实际模板。课堂又遇到循环指令拼写的问题：数据已经有了，但没有正确写出 `v-for`，字段仍不能按预期渲染。这说明同一种“看起来没内容”的现象可能发生在不同层，解决上一层不代表后一层自动正确。
+
+| 观察到的现象 | 优先检查的位置 | 能排除什么 |
+| --- | --- | --- |
+| 抽屉完全不打开 | eventKey、componentName、实例注册、show | 尚未进入表单层 |
+| 抽屉打开，DTO properties 为空 | 模型 Option、buildDtoSchema | 与输入框样式无关 |
+| DTO 有字段，模板仍空 | 动态组件注册、v-for、props | 不应继续修改后端数据 |
+| 字段出现，控制台报不存在变量 | 模板和状态命名 | 多数是局部绑定问题 |
+
+课程还处理了导入路径拼写、模板中多余字符、validateTip/validateTips 名称不一致等问题。它们本身并不复杂，但在多个组件之间复制代码后会成倍增加排查成本。
+
+## 校验失败时区分“业务非法”和“实现错误”
+
+点击保存没有请求，未必是 curl 不工作。保存前先执行了 validate，返回 false 就会直接结束流程。应先确定执行是否已经越过校验分支。
+
+课程给字段组件补充可识别名称，在父级打印各组件校验结果，以找到具体失败项。这里要注意 every 的短路行为：前一个失败后，后面的组件不会被调用。
+
+```js filename="SchemaForm 校验定位示意.js" copy
+function validate() {
+  return getItems().every(item => {
+    const valid = item.validate();
+    console.log(item.name, valid);
+    return valid;
+  });
+}
+```
+
+调试时只调用一次 validate，再打印保存下来的结果。如果为了打印执行一次、return 时又执行一次，同一个字段就会出现重复日志，并可能重复修改错误提示，让现象更难理解。
+
+课程还发现 AJV 相关调用存在拼写问题。一个基础 Input 尚未跑通就复制到 InputNumber、Select，会把同一处错误带到多个实现里。先验证基础协议，再扩展控件，能减少这种传播。
+
+字幕在这一段出现了长时间的重复识别，无法准确恢复某个 validate 最终返回 false 的全部修复细节。可确认的是，课程从保存入口追踪到字段校验，并最终完成新增提交。这里保留可复现的定位方法，不把缺失片段编造成确定的源码错误。
+
+## 加载两次列表：先理解两个触发源
+
+本节结尾还观察到一个与新增无关、但会影响联调体验的现象：页面初始化时表格进入 loading，过一会儿又加载一次。
+
+前面为了展示异步行为，接口加了人为延迟。SchemaTable 挂载时会加载数据；SearchBar 中异步选项加载完成后，又会发出 load，把初始查询参数通知页面，从而触发表格再次加载。
+
+这两个触发源各自都有理由：表格需要初始数据，搜索条件也需要在准备好后生效。是否要合并，应先看页面是否允许第一次请求不带完整搜索条件，而不能只因为看到两个 loading 就认定某个组件重复调用了同一个函数。
+
+课程提出一种可能的优化：如果页面有搜索区，可以由外部协调，等初始条件准备好后再加载表格。但没有在本节完成这套协调；课堂主要调整了演示接口的延迟来继续联调。
+
+也不应该让公共 SchemaTable 内部去寻找 SearchBar 是否存在。它只负责根据 api 和 apiProps 请求数据，搜索区什么时候准备好属于 SchemaView 的编排职责。若要进一步优化，应在知道两个模块关系的上层处理。
+
+## 本节小结
+
+CreateForm 把公共表单接进了资源创建流程：打开时读取自身 DTO 与配置，保存时先校验再取值，通过 POST 提交，成功后关闭抽屉并发出 command，由 SchemaView 刷新表格。
+
+本节的调试过程同时验证了框架边界。空表单要沿配置、DTO、模板逐层检查；没有请求要先看校验有没有通过；多个初始化请求要确认各自的触发源。只有每一层的输入输出都明确，Schema 驱动才能在减少业务代码的同时仍然保持可调试性。
