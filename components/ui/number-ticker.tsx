@@ -1,7 +1,12 @@
 "use client"
 
 import { useEffect, useRef, type ComponentPropsWithoutRef } from "react"
-import { useInView, useMotionValue, useSpring } from "motion/react"
+import {
+  useInView,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+} from "motion/react"
 
 import { cn } from "@/lib/utils"
 
@@ -23,6 +28,14 @@ export function NumberTicker({
   ...props
 }: NumberTickerProps) {
   const ref = useRef<HTMLSpanElement>(null)
+  const reduceMotion = useReducedMotion()
+  const initialValue = direction === "down" ? value : startValue
+  const finalValue = direction === "down" ? startValue : value
+  const formatter = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: decimalPlaces,
+    maximumFractionDigits: decimalPlaces,
+  })
+  const finalLabel = formatter.format(finalValue)
   const motionValue = useMotionValue(direction === "down" ? value : startValue)
   const springValue = useSpring(motionValue, {
     damping: 60,
@@ -31,6 +44,11 @@ export function NumberTicker({
   const isInView = useInView(ref, { once: true, margin: "0px" })
 
   useEffect(() => {
+    if (reduceMotion) {
+      springValue.jump(finalValue)
+      return
+    }
+
     let timer: ReturnType<typeof setTimeout> | null = null
 
     if (isInView) {
@@ -44,31 +62,43 @@ export function NumberTicker({
         clearTimeout(timer)
       }
     }
-  }, [delay, direction, isInView, motionValue, startValue, value])
+  }, [
+    delay,
+    direction,
+    finalValue,
+    isInView,
+    motionValue,
+    reduceMotion,
+    springValue,
+    startValue,
+    value,
+  ])
 
-  useEffect(
-    () =>
-      springValue.on("change", (latest) => {
-        if (ref.current) {
-          ref.current.textContent = Intl.NumberFormat("en-US", {
-            minimumFractionDigits: decimalPlaces,
-            maximumFractionDigits: decimalPlaces,
-          }).format(Number(latest.toFixed(decimalPlaces)))
-        }
-      }),
-    [decimalPlaces, springValue]
-  )
+  useEffect(() => {
+    if (reduceMotion) return
+    const formatter = new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: decimalPlaces,
+      maximumFractionDigits: decimalPlaces,
+    })
+    return springValue.on("change", (latest) => {
+      if (ref.current) {
+        ref.current.textContent = formatter.format(latest)
+      }
+    })
+  }, [decimalPlaces, reduceMotion, springValue])
 
   return (
     <span
-      ref={ref}
       className={cn(
         "inline-block tracking-tight text-foreground tabular-nums",
         className
       )}
       {...props}
     >
-      {startValue}
+      <span className="sr-only">{finalLabel}</span>
+      <span ref={ref} aria-hidden="true">
+        {reduceMotion ? finalLabel : formatter.format(initialValue)}
+      </span>
     </span>
   )
 }

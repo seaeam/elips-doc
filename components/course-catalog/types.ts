@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react"
+import type { CoursePhaseId } from "./journey"
 
 export type CourseSectionStatus = "已更新" | "持续更新"
 
@@ -20,6 +21,8 @@ export type RoadmapStep = {
 }
 
 export type CourseCatalogStoreState = {
+  query: string
+  selectedPhase: CoursePhaseId
   expandedSectionHrefs: string[]
   roadmapSteps: RoadmapStep[]
   sections: CourseSection[]
@@ -29,6 +32,11 @@ export type CourseCatalogStoreState = {
 }
 
 export type CourseCatalogStoreActions = {
+  setQuery: (query: string) => void
+  setSelectedPhase: (phase: CoursePhaseId) => void
+  resetFilters: () => void
+  revealChapter: (chapterNumber: string) => void
+  setSectionsExpanded: (sectionHrefs: string[], expanded: boolean) => void
   collapseSectionLessons: (sectionHref: string) => void
   expandSectionLessons: (sectionHref: string) => void
   toggleSectionLessons: (sectionHref: string) => void
