@@ -1,22 +1,17 @@
 "use client"
 
-import { BlurFade } from "@/components/ui/blur-fade"
 import { CourseCatalogHero } from "./components/course-catalog-hero"
 import { RoadmapPanel } from "./components/roadmap-panel"
 import { SectionIndex } from "./components/section-index"
 
 export function CourseCatalog() {
   return (
-    <div className="not-prose mx-auto mt-8 flex max-w-6xl flex-col gap-12 pb-16">
+    <div className="catalog-page not-prose mx-auto w-full max-w-6xl pb-12 md:pb-20">
       <CourseCatalogHero />
-
-      <section className="flex flex-col gap-8">
-        <BlurFade inView>
-          <RoadmapPanel />
-        </BlurFade>
-
+      <div className="grid items-start gap-10 border-t border-border pt-6 lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-14 lg:pt-10">
+        <RoadmapPanel />
         <SectionIndex />
-      </section>
+      </div>
     </div>
   )
 }

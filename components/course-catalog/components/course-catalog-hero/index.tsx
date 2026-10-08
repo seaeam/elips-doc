@@ -1,99 +1,40 @@
-import { Badge } from "@/components/ui/badge"
-import { BlurFade } from "@/components/ui/blur-fade"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { ArrowRight, BookOpenCheck, Sparkles } from "lucide-react"
 import Link from "next/link"
+import { ArrowRight } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
 import { useCourseCatalogStore } from "../../store"
 
 export function CourseCatalogHero() {
-  const currentFocus = useCourseCatalogStore((state) => state.currentFocus)
-  const heroStats = useCourseCatalogStore((state) => state.heroStats)
-  const CurrentFocusIcon = currentFocus.icon
+  const totalLessons = useCourseCatalogStore((state) => state.totalLessons)
+  const totalModules = useCourseCatalogStore((state) => state.totalModules)
 
   return (
-    <section className="relative overflow-hidden rounded-xl border border-border/60 bg-linear-to-br from-background via-background to-muted/50 p-5">
-      <div className="relative grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(320px,0.74fr)] lg:items-center">
-        <BlurFade className="flex flex-col gap-6">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge variant="secondary" className="px-3 py-1">
-              <Sparkles data-icon="inline-start" />
-              章节导航
-            </Badge>
-            <Badge variant="outline" className="px-3 py-1">
-              MDX Index
-            </Badge>
-          </div>
-
-          <div className="flex flex-col gap-4">
-            <h1 className="max-w-3xl text-3xl leading-tight font-semibold md:text-5xl">
-              课程笔记
-            </h1>
-            <p className="max-w-2xl text-sm leading-7 text-muted-foreground md:text-base">
-              查看模块状态、小节标题与推荐学习顺序，快速找到下一节内容
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline">模块入口</Badge>
-            <Badge variant="outline">小节标题</Badge>
-            <Badge variant="outline">更新状态</Badge>
-            <Badge variant="outline">快速跳转</Badge>
-          </div>
-
-          <div className="flex flex-wrap gap-3">
-            <Button asChild size="lg" className="px-4">
-              <Link href="/courses/01-introduction/01">
-                开始第一章
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="px-4">
-              <Link href={currentFocus.href}>
-                查看最新章节
-                <BookOpenCheck data-icon="inline-end" />
-              </Link>
-            </Button>
-          </div>
-        </BlurFade>
-
-        <BlurFade delay={0.1} className="flex flex-col gap-4">
-          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-            {heroStats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-lg border border-border/70 bg-background/75 p-4"
-              >
-                <div className="text-3xl leading-none font-semibold">
-                  {stat.value.toLocaleString("en-US")}
-                  {stat.suffix}
-                </div>
-                <p className="mt-2 text-xs text-muted-foreground">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div className="rounded-lg border border-border/70 bg-background/75 p-5">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <span className="flex size-9 items-center justify-center rounded-lg border border-border/70 bg-muted/60">
-                  <CurrentFocusIcon className="size-4" />
-                </span>
-                <div>
-                  <Badge variant="secondary">最近更新</Badge>
-                  <p className="font-medium">{currentFocus.title}</p>
-                </div>
-              </div>
-            </div>
-            <Separator className="my-4" />
-            <p className="text-sm leading-7 text-muted-foreground">
-              {currentFocus.focus}
-            </p>
-          </div>
-        </BlurFade>
+    <header className="catalog-enter flex flex-col gap-6 pt-8 pb-10 md:pt-12 md:pb-12 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+      <div>
+        <p className="mb-4 text-sm text-muted-foreground">
+          ELPIS{" "}
+          <span aria-hidden="true" className="mx-2 text-border">
+            /
+          </span>{" "}
+          {totalModules} 章 · {totalLessons} 节
+        </p>
+        <h1 className="text-4xl leading-tight font-semibold tracking-tight text-foreground md:text-5xl">
+          课程笔记
+        </h1>
+        <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground md:text-base">
+          按原课程顺序整理。展开章节，点击小节标题即可阅读。
+        </p>
       </div>
-    </section>
+      <Button
+        asChild
+        size="lg"
+        className="h-11 w-fit shrink-0 gap-3 px-5 has-data-[icon=inline-end]:pr-4"
+      >
+        <Link href="/courses/01-introduction/01">
+          从第一节开始
+          <ArrowRight aria-hidden="true" data-icon="inline-end" />
+        </Link>
+      </Button>
+    </header>
   )
 }

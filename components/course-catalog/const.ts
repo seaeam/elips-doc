@@ -11,8 +11,6 @@ import {
 } from "lucide-react"
 import type { CourseSection, RoadmapStep } from "./types"
 
-export const DEFAULT_VISIBLE_LESSON_COUNT = 3
-
 export const COURSE_SECTIONS: CourseSection[] = [
   {
     number: "01",
@@ -20,11 +18,8 @@ export const COURSE_SECTIONS: CourseSection[] = [
     href: "/courses/01-introduction/01",
     lessons: 6,
     status: "已更新",
-    summary: "从课程设计初衷、时代背景和学习方式切入，建立完整课程上下文。",
+    summary: "课程背景、适合人群和学习方式。",
     icon: Sparkles,
-    focus:
-      "先理解课程为什么要围绕领域模型架构展开，再明确适合人群、学习节奏与团队背景。",
-    keywords: ["课程定位", "时代背景", "学习方式"],
     lessonTitles: [
       "课程设计初衷",
       "时代背景分析",
@@ -40,15 +35,12 @@ export const COURSE_SECTIONS: CourseSection[] = [
     href: "/courses/02-requirement/01",
     lessons: 3,
     status: "已更新",
-    summary: "从重复性工作和平台化目标出发，推导领域模型架构的真实需求。",
+    summary: "梳理中后台开发中的重复工作，确定框架需要解决的问题。",
     icon: Workflow,
-    focus:
-      "把业务开发中的重复建设问题抽象成框架目标，明确 Elpis 需要解决的核心矛盾。",
-    keywords: ["需求推导", "领域模型", "框架目标"],
     lessonTitles: [
-      "痛点：纯前端业务开发（体力活，无成长）",
-      "目标：专注架构设计与基建，脱离体力活",
-      "需求：搭建基于“领域模型架构”的开发框架",
+      "前端业务开发中的重复工作",
+      "框架设计与基础建设",
+      "基于领域模型的框架需求",
     ],
   },
   {
@@ -57,10 +49,8 @@ export const COURSE_SECTIONS: CourseSection[] = [
     href: "/courses/03-technology-selection-and-architecture/01",
     lessons: 6,
     status: "已更新",
-    summary: "完成命名、方案调研、架构设计、技术选型、BFF 与前端领域模型设计。",
+    summary: "比较现有方案，确定技术栈，设计 BFF 和前端领域模型。",
     icon: Layers3,
-    focus: "从命名、调研、技术栈到前后端边界，把框架的架构骨架先搭清楚。",
-    keywords: ["架构设计", "BFF", "技术选型"],
     lessonTitles: [
       "框架名称 - elpis",
       "业界方案调研",
@@ -72,15 +62,12 @@ export const COURSE_SECTIONS: CourseSection[] = [
   },
   {
     number: "04",
-    title: "基于 Node.js 实现服务端内核引擎",
+    title: "Node.js 服务端内核",
     href: "/courses/04-nodejs-server-core-engine/01",
     lessons: 10,
     status: "已更新",
-    summary: "从 Git 流程到项目初始化，再到 elpis-core 服务端内核的完整实现。",
+    summary: "搭建项目和 Git 工作流，编写 elpis-core 的加载器、路由与中间件。",
     icon: ServerCog,
-    focus:
-      "完成工程协作基础、项目初始化与 elpis-core 内核，形成框架服务端的执行底座。",
-    keywords: ["Node.js", "Gitflow", "elpis-core"],
     lessonTitles: [
       "创建项目 - git 环境搭建",
       "gitflow 协同流程操作演示",
@@ -96,15 +83,12 @@ export const COURSE_SECTIONS: CourseSection[] = [
   },
   {
     number: "05",
-    title: "基于 Webpack5 完成工程化建设",
+    title: "Webpack 5 工程配置",
     href: "/courses/05-webpack5-engineering/01",
     lessons: 7,
     status: "已更新",
-    summary: "搭建前端工程体系，并逐步补齐 Elpis 的前端基础设施和工程能力。",
+    summary: "配置开发环境、资源处理和构建流程。",
     icon: Boxes,
-    focus:
-      "围绕 Webpack5 建立前端工程链路，为后续模型应用和模板引擎提供稳定构建环境。",
-    keywords: ["Webpack 5", "工程化", "前端基础建设"],
     lessonTitles: [
       "webpack5 工程化设计",
       "webpack5 前端工程化搭建（1）",
@@ -117,16 +101,12 @@ export const COURSE_SECTIONS: CourseSection[] = [
   },
   {
     number: "06",
-    title: "基于 Vue3 完成领域模型架构构建",
+    title: "Vue 3 领域模型与页面",
     href: "/courses/06-vue3-domain-model-architecture/01",
     lessons: 19,
     status: "已更新",
-    summary:
-      "覆盖 DSL、解析引擎、模型应用与模板引擎，落到 dashboard 具体实现。",
+    summary: "编写 DSL 和解析器，实现应用入口、表格与查询页面。",
     icon: Braces,
-    focus:
-      "从 DSL 到解析引擎、模型应用、dashboard 与 Schema 系列视图，完成领域模型主干落地。",
-    keywords: ["Vue 3", "DSL", "模板引擎"],
     lessonTitles: [
       "领域模型 DSL 设计",
       "领域模型 DSL 解析引擎",
@@ -151,15 +131,12 @@ export const COURSE_SECTIONS: CourseSection[] = [
   },
   {
     number: "07",
-    title: "基于 Vue3 完成动态组件库建设",
+    title: "Vue 3 动态组件",
     href: "/courses/07-vue3-dynamic-component-library/01",
     lessons: 6,
     status: "已更新",
-    summary: "围绕 DSL、机制实现与表单类场景，搭出可复用的动态组件库能力。",
+    summary: "实现动态表单，以及新增、编辑和详情组件。",
     icon: Cpu,
-    focus:
-      "把领域模型进一步转成组件能力，覆盖 SchemaForm、CreateForm、EditForm 与 DetailPanel。",
-    keywords: ["动态组件", "SchemaForm", "表单体系"],
     lessonTitles: [
       "动态组件 - DSL设计",
       "动态组件 - 机制实现",
@@ -171,15 +148,12 @@ export const COURSE_SECTIONS: CourseSection[] = [
   },
   {
     number: "08",
-    title: "完成框架 npm 包抽象封装并发布",
+    title: "npm 包封装与发布",
     href: "/courses/08-framework-npm-package-and-release/01",
     lessons: 5,
     status: "已更新",
-    summary: "将框架能力抽离为 npm 包，完成封装、构建与发布链路的连续讲解。",
+    summary: "拆分框架代码，配置打包并发布到 npm。",
     icon: PackageOpen,
-    focus:
-      "把前面沉淀的框架能力整理成可复用包，补齐从抽象封装到 npm 发布的最后一段链路。",
-    keywords: ["npm 发布", "包抽象", "框架封装"],
     lessonTitles: [
       "抽离并发布 npm 包（1）",
       "抽离并发布 npm 包（2）",
@@ -190,16 +164,12 @@ export const COURSE_SECTIONS: CourseSection[] = [
   },
   {
     number: "09",
-    title: "赠课扩展：框架应用与项目实践",
+    title: "项目实践（赠课）",
     href: "/courses/09-bonus-framework-application-and-practice/01",
     lessons: 5,
     status: "已更新",
-    summary:
-      "补齐 CI/CD、登录鉴权和人员管理等真实项目实践，让框架从封装发布进入应用落地。",
+    summary: "配置 CI/CD，编写登录、鉴权和人员管理功能。",
     icon: BookOpen,
-    focus:
-      "把前面沉淀的框架能力带回项目现场，完成持续集成、持续部署、登录态校验和业务模块建设。",
-    keywords: ["CI/CD", "登录鉴权", "项目实践"],
     lessonTitles: [
       "持续集成（CI）",
       "持续部署（CD）",
@@ -211,29 +181,9 @@ export const COURSE_SECTIONS: CourseSection[] = [
 ]
 
 export const ROADMAP_STEPS: RoadmapStep[] = [
-  {
-    title: "理解问题",
-    range: "01-02",
-    description: "先建立课程背景，再把重复建设问题推导成框架需求。",
-  },
-  {
-    title: "确定架构",
-    range: "03",
-    description: "完成命名、调研、技术选型、BFF 与前端领域模型设计。",
-  },
-  {
-    title: "搭建底座",
-    range: "04-05",
-    description: "实现 Node.js 内核引擎，并补齐 Webpack5 工程化链路。",
-  },
-  {
-    title: "落地模型",
-    range: "06-07",
-    description: "用 Vue3 承接 DSL、模板引擎与动态组件库的具体实现。",
-  },
-  {
-    title: "封装实践",
-    range: "08-09",
-    description: "完成 npm 包抽象发布，并补齐 CI/CD、登录鉴权与人员管理实践。",
-  },
+  { title: "前言与需求", range: "01–02", href: "#chapter-01" },
+  { title: "技术选型", range: "03", href: "#chapter-03" },
+  { title: "服务端与构建", range: "04–05", href: "#chapter-04" },
+  { title: "页面与组件", range: "06–07", href: "#chapter-06" },
+  { title: "发布与实践", range: "08–09", href: "#chapter-08" },
 ]

@@ -5,6 +5,7 @@ const meta: MetaRecord = {
     title: "首页",
     type: "page",
     theme: {
+      timestamp: false,
       copyPage: false,
       pagination: false,
       sidebar: false,
@@ -20,6 +21,7 @@ const meta: MetaRecord = {
     title: "关于",
     type: "page",
     theme: {
+      timestamp: false,
       copyPage: false,
       layout: "full",
       pagination: false,

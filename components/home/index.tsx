@@ -3,6 +3,7 @@
 import { CourseHomeHero } from "./components/course-home-hero"
 import { FinalCta } from "./components/final-cta"
 import { HighlightGrid } from "./components/highlight-grid"
+import { HomeReveal } from "./components/reveal"
 import { useCourseHomepageStore } from "./store"
 
 export function CourseHomepage() {
@@ -10,10 +11,12 @@ export function CourseHomepage() {
   const highlights = useCourseHomepageStore((state) => state.highlights)
 
   return (
-    <div className="not-prose relative">
+    <div className="home-page not-prose relative mx-auto w-full max-w-6xl pb-8 md:pb-14">
       <CourseHomeHero heroPlaybackId={heroPlaybackId} />
       <HighlightGrid highlights={highlights} />
-      <FinalCta />
+      <HomeReveal>
+        <FinalCta />
+      </HomeReveal>
     </div>
   )
 }

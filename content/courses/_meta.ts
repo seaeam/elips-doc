@@ -4,9 +4,11 @@ const meta: MetaRecord = {
   index: {
     title: "课程目录",
     theme: {
+      breadcrumb: false,
       copyPage: false,
       pagination: false,
-      sidebar: true,
+      sidebar: false,
+      timestamp: false,
       layout: "full",
       toc: false,
     },

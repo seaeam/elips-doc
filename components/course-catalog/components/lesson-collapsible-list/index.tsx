@@ -1,88 +1,43 @@
-import { Button } from "@/components/ui/button"
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
-import { ChevronDown, ChevronUp } from "lucide-react"
-import { useSectionLessons } from "../../hooks/use-section-lessons"
+import Link from "next/link"
+import { ArrowUpRight } from "lucide-react"
 
-function LessonListItem({
-  title,
-  lessonIndex,
-}: {
-  title: string
-  lessonIndex: number
-}) {
-  return (
-    <li className="grid grid-cols-[auto_1fr] items-start gap-3 rounded-md border border-border/60 bg-background/55 px-3 py-2 text-sm">
-      <span className="mt-0.5 flex size-5 items-center justify-center rounded-full bg-muted text-[0.68rem] font-medium text-muted-foreground">
-        {String(lessonIndex + 1).padStart(2, "0")}
-      </span>
-      <span className="leading-6">{title}</span>
-    </li>
-  )
+import { getLessonHref } from "../../utils"
+
+type LessonCollapsibleListProps = {
+  sectionHref: string
+  lessons: string[]
 }
 
 export function LessonCollapsibleList({
   sectionHref,
-}: {
-  sectionHref: string
-}) {
-  const {
-    hasHiddenLessons,
-    hiddenLessons,
-    isExpanded,
-    setLessonsOpen,
-    visibleLessons,
-  } = useSectionLessons(sectionHref)
-
+  lessons,
+}: LessonCollapsibleListProps) {
   return (
-    <Collapsible
-      open={isExpanded}
-      onOpenChange={setLessonsOpen}
-      className="flex flex-col gap-3"
-    >
-      <ul className="grid gap-2">
-        {visibleLessons.map((title, lessonIndex) => (
-          <LessonListItem
-            key={`${sectionHref}-${lessonIndex}-${title}`}
-            title={title}
-            lessonIndex={lessonIndex}
-          />
-        ))}
-      </ul>
-
-      {hasHiddenLessons ? (
-        <CollapsibleContent className="overflow-hidden">
-          <ul className="grid gap-2">
-            {hiddenLessons.map((title, hiddenIndex) => {
-              const lessonIndex = hiddenIndex + visibleLessons.length
-
-              return (
-                <LessonListItem
-                  key={`${sectionHref}-${lessonIndex}-${title}`}
-                  title={title}
-                  lessonIndex={lessonIndex}
-                />
-              )
-            })}
-          </ul>
-        </CollapsibleContent>
-      ) : null}
-
-      {hasHiddenLessons ? (
-        <CollapsibleTrigger asChild>
-          <Button variant="outline" size="sm" className="w-fit">
-            {isExpanded ? "收起课程" : `展开剩余 ${hiddenLessons.length} 节`}
-            {isExpanded ? (
-              <ChevronUp data-icon="inline-end" />
-            ) : (
-              <ChevronDown data-icon="inline-end" />
-            )}
-          </Button>
-        </CollapsibleTrigger>
-      ) : null}
-    </Collapsible>
+    <ol className="grid grid-cols-1 gap-x-7 sm:grid-cols-2">
+      {lessons.map((title, index) => (
+        <li
+          key={getLessonHref(sectionHref, index)}
+          className="min-w-0 border-t border-border/60"
+        >
+          <Link
+            href={getLessonHref(sectionHref, index)}
+            prefetch={false}
+            className="catalog-lesson-link group grid min-h-12 grid-cols-[1.5rem_minmax(0,1fr)_1rem] items-start gap-2 rounded-sm py-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            <span
+              aria-hidden="true"
+              className="pt-0.5 font-mono text-xs leading-6 text-muted-foreground"
+            >
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <span className="leading-7">{title}</span>
+            <ArrowUpRight
+              aria-hidden="true"
+              className="mt-1.5 size-3.5 text-muted-foreground opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+            />
+          </Link>
+        </li>
+      ))}
+    </ol>
   )
 }

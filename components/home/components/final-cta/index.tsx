@@ -1,58 +1,40 @@
 import Link from "next/link"
-import { ArrowRight, Info } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
-import { BlurFade } from "@/components/ui/blur-fade"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { ShineBorder } from "@/components/ui/shine-border"
 import { NoiseTexture } from "@/components/ui/noise-texture"
 
 export function FinalCta() {
   return (
-    <section className="px-6 pb-20 md:px-10">
-      <BlurFade inView className="mx-auto max-w-6xl">
-        <Card className="relative overflow-hidden border border-foreground/10 bg-linear-to-br from-background to-muted/50">
-          <ShineBorder
-            borderWidth={1}
-            duration={10}
-            shineColor={[
-              "rgba(255,255,255,0)",
-              "rgba(120,119,198,0.5)",
-              "rgba(255,255,255,0)",
-            ]}
+    <section
+      aria-labelledby="home-about-title"
+      className="relative overflow-hidden rounded-xl border border-border/70 bg-linear-to-br from-background to-muted/50 px-6 py-8 sm:px-9 sm:py-10"
+    >
+      <NoiseTexture noiseOpacity={0.12} aria-hidden="true" />
+      <div className="relative flex flex-col items-start justify-between gap-6 md:flex-row md:items-center md:gap-12">
+        <div className="max-w-2xl">
+          <h2
+            id="home-about-title"
+            className="text-xl font-medium tracking-tight"
+          >
+            关于这份笔记
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-muted-foreground">
+            由 506
+            实验室学习「哲玄大前端全栈课程」时整理，方便回看代码和查阅章节。
+            阅读时请配合原课程，内容仅供实验室内部学习。
+          </p>
+        </div>
+        <Link
+          href="/about"
+          className="home-text-link group inline-flex min-h-11 shrink-0 items-center gap-2 text-sm font-medium underline decoration-border underline-offset-4 transition-colors hover:decoration-foreground"
+        >
+          来源与使用说明
+          <ArrowUpRight
+            aria-hidden="true"
+            className="size-4 transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5"
           />
-          <CardContent className="grid gap-8 px-6 py-8 md:grid-cols-[1fr_auto] md:px-8 md:py-10">
-            <NoiseTexture noiseOpacity={0.45} />
-            <div className="flex flex-col gap-3">
-              <Badge variant="secondary" className="px-3 py-1">
-                开始阅读
-              </Badge>
-              <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-                从导览开始，再按章节深入
-              </h2>
-              <p className="max-w-2xl text-sm leading-7 text-muted-foreground md:text-base">
-                想先判断内容是否匹配自己的方向，可以先看导览；如果已经明确目标，直接进入课程目录即可。
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3 md:items-stretch">
-              <Button asChild>
-                <Link href="/courses">
-                  查看课程目录
-                  <ArrowRight data-icon="inline-end" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href="/about">
-                  了解站点说明
-                  <Info data-icon="inline-end" />
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </BlurFade>
+        </Link>
+      </div>
     </section>
   )
 }

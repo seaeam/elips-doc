@@ -1,9 +1,8 @@
-import type { LucideIcon } from "lucide-react"
-
 export type CourseHighlight = {
+  chapters: string
   title: string
   description: string
-  icon: LucideIcon
+  href: string
 }
 
 export type CourseHomepageStore = {

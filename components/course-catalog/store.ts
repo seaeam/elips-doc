@@ -1,35 +1,20 @@
 import { create } from "zustand"
-import {
-  COURSE_SECTIONS,
-  DEFAULT_VISIBLE_LESSON_COUNT,
-  ROADMAP_STEPS,
-} from "./const"
+import { COURSE_SECTIONS, ROADMAP_STEPS } from "./const"
 import type { CourseCatalogStore, CourseCatalogStoreState } from "./types"
-import {
-  buildHeroStats,
-  createSectionsByHref,
-  getCurrentFocusSection,
-  getTotalLessons,
-  getUpdatedModules,
-} from "./utils"
+import { createSectionsByHref, getTotalLessons } from "./utils"
 
 function createCourseCatalogStoreState(): CourseCatalogStoreState {
   const sections = COURSE_SECTIONS
   const totalLessons = getTotalLessons(sections)
-  const updatedModules = getUpdatedModules(sections)
   const totalModules = sections.length
 
   return {
-    currentFocus: getCurrentFocusSection(sections, "09"),
     expandedSectionHrefs: [],
-    heroStats: buildHeroStats(totalLessons, updatedModules, totalModules),
     roadmapSteps: ROADMAP_STEPS,
     sections,
     sectionsByHref: createSectionsByHref(sections),
     totalLessons,
     totalModules,
-    updatedModules,
-    visibleLessonCount: DEFAULT_VISIBLE_LESSON_COUNT,
   }
 }
 

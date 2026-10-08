@@ -1,132 +1,79 @@
-import { Badge } from "@/components/ui/badge"
-import { BlurFade } from "@/components/ui/blur-fade"
-import { Button } from "@/components/ui/button"
+import { ChevronDown } from "lucide-react"
+
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { ShineBorder } from "@/components/ui/shine-border"
-import {
-  ArrowRight,
-  CheckCircle2,
-  CircleDot,
-  Compass,
-  Layers3,
-} from "lucide-react"
-import Link from "next/link"
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible"
+import { useSectionLessons } from "../../hooks/use-section-lessons"
 import { useCourseCatalogStore } from "../../store"
-import { getSectionStatusVariant } from "../../utils"
 import { LessonCollapsibleList } from "../lesson-collapsible-list"
 
 type SectionCardProps = {
-  index: number
   sectionHref: string
 }
 
-export function SectionCard({ sectionHref, index }: SectionCardProps) {
+export function SectionCard({ sectionHref }: SectionCardProps) {
   const section = useCourseCatalogStore(
     (state) => state.sectionsByHref[sectionHref]
   )
-  const currentFocusHref = useCourseCatalogStore(
-    (state) => state.currentFocus.href
-  )
+  const { lessons, isExpanded, setLessonsOpen } = useSectionLessons(sectionHref)
 
-  if (!section) {
-    return null
-  }
+  if (!section) return null
 
-  const Icon = section.icon
-  const isCurrentFocus = section.href === currentFocusHref
+  const titleId = `catalog-chapter-${section.number}-title`
 
   return (
-    <BlurFade inView delay={index * 0.035}>
-      <Card className="relative h-full border-border/60 bg-background/80 transition-transform duration-300 hover:-translate-y-1 hover:border-foreground/15">
-        {isCurrentFocus ? (
-          <ShineBorder
-            duration={10}
-            shineColor={[
-              "rgba(160,124,254,0.48)",
-              "rgba(254,143,181,0.42)",
-              "rgba(255,190,123,0.38)",
-            ]}
-          />
-        ) : null}
-
-        <CardHeader className="gap-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex min-w-0 items-center gap-3">
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border/70 bg-muted/60">
-                <Icon className="size-4" />
-              </span>
-              <div className="min-w-0">
-                <CardDescription>
-                  第 {section.number} 章 · {section.lessons} 节
-                </CardDescription>
-                <CardTitle className="mt-1 text-lg md:text-xl">
-                  {section.title}
-                </CardTitle>
-              </div>
-            </div>
-            <Badge
-              variant={getSectionStatusVariant(section.status)}
-              className="shrink-0"
+    <section
+      id={`chapter-${section.number}`}
+      aria-labelledby={titleId}
+      className="catalog-chapter scroll-mt-28 border-b border-border"
+    >
+      <Collapsible open={isExpanded} onOpenChange={setLessonsOpen}>
+        <h3 aria-labelledby={titleId}>
+          <CollapsibleTrigger
+            className="catalog-chapter-toggle grid w-full grid-cols-[1.5rem_minmax(0,1fr)_auto] items-start gap-x-3 rounded-md py-6 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-4 focus-visible:ring-offset-background sm:grid-cols-[2rem_minmax(0,1fr)_auto] sm:gap-x-5 sm:py-7"
+            aria-label={`${isExpanded ? "收起" : "展开"}第 ${section.number} 章：${section.title}`}
+          >
+            <span
+              aria-hidden="true"
+              className="pt-1 font-mono text-sm leading-7 text-muted-foreground"
             >
-              {section.status}
-            </Badge>
+              {section.number}
+            </span>
+            <span className="min-w-0">
+              <span
+                id={titleId}
+                className="block text-lg leading-8 font-medium text-foreground sm:text-xl"
+              >
+                {section.title}
+              </span>
+              <span className="mt-1 block text-sm leading-7 font-normal text-muted-foreground">
+                {section.summary}
+              </span>
+            </span>
+            <span className="flex items-center gap-2 pt-1 text-sm leading-7 font-normal text-muted-foreground sm:gap-4">
+              <span className="whitespace-nowrap">{lessons.length} 节</span>
+              <ChevronDown
+                aria-hidden="true"
+                className="catalog-chevron size-4 shrink-0"
+              />
+            </span>
+          </CollapsibleTrigger>
+        </h3>
+        <CollapsibleContent
+          inert={!isExpanded}
+          aria-hidden={!isExpanded}
+          className="catalog-lessons-panel overflow-hidden"
+        >
+          <div className="pb-7 sm:ml-[3.25rem]">
+            <LessonCollapsibleList
+              sectionHref={sectionHref}
+              lessons={lessons}
+            />
           </div>
-        </CardHeader>
-
-        <CardContent className="flex flex-1 flex-col gap-5">
-          <p className="text-sm leading-7 text-muted-foreground">
-            {section.summary}
-          </p>
-
-          <div className="rounded-lg border border-border/70 bg-muted/35 p-4">
-            <div className="mb-2 flex items-center gap-2 text-xs font-medium text-muted-foreground">
-              <Compass className="size-3.5" />
-              本章重点
-            </div>
-            <p className="text-sm leading-6">{section.focus}</p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {section.keywords.map((keyword) => (
-              <Badge key={keyword} variant="outline">
-                {keyword}
-              </Badge>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-              <Layers3 className="size-3.5" />
-              章节内容
-            </div>
-            <LessonCollapsibleList sectionHref={section.href} />
-          </div>
-        </CardContent>
-
-        <CardFooter className="justify-between gap-3">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-            {section.status === "已更新" ? (
-              <CheckCircle2 className="size-3.5" />
-            ) : (
-              <CircleDot className="size-3.5" />
-            )}
-            <span>{section.lessons} lessons</span>
-          </div>
-          <Button asChild variant="ghost" size="sm">
-            <Link href={section.href}>
-              开始学习
-              <ArrowRight data-icon="inline-end" />
-            </Link>
-          </Button>
-        </CardFooter>
-      </Card>
-    </BlurFade>
+        </CollapsibleContent>
+      </Collapsible>
+    </section>
   )
 }

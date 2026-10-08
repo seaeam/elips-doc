@@ -93,7 +93,7 @@ const footer = (
 )
 const banner = (
   <Banner storageKey="course-updating-2026-04-25">
-    🎉 当前视频内容与课程笔记正在持续更新中。
+    课程视频和笔记持续更新中。
   </Banner>
 )
 

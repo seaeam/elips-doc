@@ -7,9 +7,6 @@ export function useSectionLessons(sectionHref: string) {
     (state) =>
       state.sectionsByHref[sectionHref]?.lessonTitles ?? EMPTY_LESSON_TITLES
   )
-  const visibleLessonCount = useCourseCatalogStore(
-    (state) => state.visibleLessonCount
-  )
   const isExpanded = useCourseCatalogStore((state) =>
     state.expandedSectionHrefs.includes(sectionHref)
   )
@@ -19,21 +16,16 @@ export function useSectionLessons(sectionHref: string) {
   const expandSectionLessons = useCourseCatalogStore(
     (state) => state.expandSectionLessons
   )
-  const visibleLessons = lessons.slice(0, visibleLessonCount)
-  const hiddenLessons = lessons.slice(visibleLessonCount)
 
   return {
-    hiddenLessons,
+    lessons,
     isExpanded,
-    hasHiddenLessons: hiddenLessons.length > 0,
     setLessonsOpen: (open: boolean) => {
       if (open) {
         expandSectionLessons(sectionHref)
-        return
+      } else {
+        collapseSectionLessons(sectionHref)
       }
-
-      collapseSectionLessons(sectionHref)
     },
-    visibleLessons,
   }
 }
