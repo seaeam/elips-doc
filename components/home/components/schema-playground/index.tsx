@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useId, useState } from "react"
 import Link from "next/link"
 import {
   ArrowRight,
@@ -47,7 +47,19 @@ const examples = {
 
 export function SchemaPlayground() {
   const [active, setActive] = useState<keyof typeof examples>("product")
+  const [query, setQuery] = useState("")
+  const [submittedQuery, setSubmittedQuery] = useState("")
+  const searchId = useId()
   const example = examples[active]
+  const visibleRows = example.rows.filter(([name]) =>
+    name.toLocaleLowerCase().includes(submittedQuery.toLocaleLowerCase())
+  )
+
+  function resetQuery() {
+    setQuery("")
+    setSubmittedQuery("")
+  }
+
   return (
     <section
       aria-labelledby="home-playground-title"
@@ -79,7 +91,7 @@ export function SchemaPlayground() {
             </span>
           </div>
           <p className="mt-2 text-sm leading-7 text-muted-foreground">
-            点击下方按钮，切换字段配置和表格示例。
+            输入名称试试查询，也可以切换商品和人员模型。
           </p>
           <div className="mt-6 grid min-w-0 gap-4 sm:grid-cols-2">
             <div className="min-w-0 overflow-hidden rounded-xl bg-zinc-950 text-zinc-200">
@@ -102,11 +114,7 @@ export function SchemaPlayground() {
                 </code>
               </pre>
             </div>
-            <div
-              className="min-w-0 overflow-hidden rounded-xl border border-border bg-background"
-              aria-live="polite"
-              aria-atomic="true"
-            >
+            <div className="min-w-0 overflow-hidden rounded-xl border border-border bg-background">
               <div className="flex items-center justify-between border-b border-border px-4 py-3 text-[11px]">
                 <span>{example.title}</span>
                 <span className="text-[9px] text-muted-foreground">
@@ -114,14 +122,43 @@ export function SchemaPlayground() {
                 </span>
               </div>
               <div className="px-4 py-5">
-                <div className="mb-4 flex items-center gap-2 text-[10px] text-muted-foreground">
-                  <span className="h-6 flex-1 rounded border border-border bg-muted/30 px-2 py-1">
-                    按{example.label}查询…
-                  </span>
-                  <span className="rounded bg-foreground px-2 py-1 text-background">
+                <form
+                  role="search"
+                  aria-label={`${example.title}示例查询`}
+                  onSubmit={(event) => {
+                    event.preventDefault()
+                    setSubmittedQuery(query.trim())
+                  }}
+                  onReset={resetQuery}
+                  className="mb-4 flex items-center gap-2 text-[10px]"
+                >
+                  <label htmlFor={searchId} className="sr-only">
+                    按{example.label}查询
+                  </label>
+                  <input
+                    id={searchId}
+                    type="search"
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder={`按${example.label}查询…`}
+                    autoComplete="off"
+                    aria-describedby={`${searchId}-results`}
+                    className="h-8 min-w-0 flex-1 rounded border border-border bg-muted/30 px-2 text-foreground outline-none placeholder:text-muted-foreground"
+                  />
+                  <button
+                    type="submit"
+                    className="experience-focus h-8 shrink-0 cursor-pointer rounded bg-foreground px-2.5 text-background transition-opacity hover:opacity-80"
+                  >
                     查询
-                  </span>
-                </div>
+                  </button>
+                  <button
+                    type="reset"
+                    disabled={!query && !submittedQuery}
+                    className="experience-focus h-8 shrink-0 cursor-pointer rounded border border-border px-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-default disabled:opacity-40"
+                  >
+                    重置
+                  </button>
+                </form>
                 <table className="w-full text-left text-[11px]">
                   <caption className="sr-only">{example.title}示例数据</caption>
                   <thead>
@@ -133,7 +170,7 @@ export function SchemaPlayground() {
                     </tr>
                   </thead>
                   <tbody>
-                    {example.rows.map(([name, value]) => (
+                    {visibleRows.map(([name, value]) => (
                       <tr key={name} className="border-b border-border/50">
                         <td className="py-3">{name}</td>
                         <td className="py-3 text-right text-muted-foreground">
@@ -141,10 +178,29 @@ export function SchemaPlayground() {
                         </td>
                       </tr>
                     ))}
+                    {visibleRows.length === 0 && (
+                      <tr>
+                        <td
+                          colSpan={2}
+                          className="py-8 text-center leading-6 text-muted-foreground"
+                        >
+                          未找到匹配的{active === "product" ? "商品" : "人员"}
+                          <span className="block text-[10px]">
+                            换个关键词，或重置查看全部
+                          </span>
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
-                <p className="mt-5 text-[9px] text-muted-foreground">
-                  表格数据示例
+                <p
+                  id={`${searchId}-results`}
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
+                  className="mt-5 text-[9px] text-muted-foreground"
+                >
+                  {example.title}示例 · 显示 {visibleRows.length} / {example.rows.length} 条
                 </p>
               </div>
             </div>
@@ -152,9 +208,10 @@ export function SchemaPlayground() {
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
             <ShimmerButton
               type="button"
-              onClick={() =>
+              onClick={() => {
                 setActive(active === "product" ? "user" : "product")
-              }
+                resetQuery()
+              }}
               background="var(--foreground)"
               shimmerColor="#999999"
               borderRadius="999px"
