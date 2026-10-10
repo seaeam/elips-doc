@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import dynamic from "next/dynamic"
 import {
   ArrowRight,
   ArrowUpRight,
@@ -19,6 +18,7 @@ import {
   Terminal,
 } from "lucide-react"
 import { COURSE_SECTIONS } from "@/components/course-catalog/const"
+import { CourseVideo } from "@/components/course-video"
 import { BlurFade } from "@/components/ui/blur-fade"
 import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
@@ -26,17 +26,6 @@ import { DotPattern } from "@/components/ui/dot-pattern"
 import { Marquee } from "@/components/ui/marquee"
 import { NumberTicker } from "@/components/ui/number-ticker"
 import { cn } from "@/lib/utils"
-
-const Player = dynamic(() => import("@/components/ui/player"), {
-  loading: () => (
-    <div
-      className="flex aspect-video items-center justify-center rounded-xl bg-muted text-sm text-muted-foreground"
-      role="status"
-    >
-      正在加载视频…
-    </div>
-  ),
-})
 
 export function HomeMetrics() {
   const total = COURSE_SECTIONS.reduce(
@@ -142,8 +131,6 @@ export function TechStack() {
 }
 
 export function HomeIntro({ playbackId }: { playbackId: string }) {
-  const [playing, setPlaying] = useState(false)
-  const [playError, setPlayError] = useState(false)
   return (
     <section
       aria-labelledby="home-intro-title"
@@ -183,93 +170,26 @@ export function HomeIntro({ playbackId }: { playbackId: string }) {
         </Link>
       </BlurFade>
       <BlurFade inView delay={0.1}>
-        <figure className="relative overflow-hidden rounded-2xl border border-border bg-muted/10 p-3 sm:p-4">
+        <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/10 p-3 sm:p-4">
           <div className="mb-3 flex items-center justify-between px-1 text-[10px] text-muted-foreground">
             <span className="flex items-center gap-2">
               <Play className="size-3" /> 课程导览
             </span>
             <span className="font-mono">EPISODE 01</span>
           </div>
-          {playError ? (
-            <div
-              className="flex aspect-video flex-col items-center justify-center gap-4 rounded-xl bg-muted px-6 text-center"
-              role="status"
-            >
-              <p className="text-sm leading-7 text-muted-foreground">
-                视频暂时无法加载，
-                <br />
-                可以先阅读本节笔记。
-              </p>
-              <Link
-                href="/courses/01-introduction/01"
-                className="experience-focus rounded text-sm underline underline-offset-4"
-              >
-                阅读课程设计初衷
-              </Link>
-              <button
-                type="button"
-                className="experience-focus cursor-pointer rounded text-xs text-muted-foreground"
-                onClick={() => setPlayError(false)}
-              >
-                重试视频
-              </button>
-            </div>
-          ) : playing ? (
-            <Player
-              playbackId={playbackId}
-              title="课程设计初衷"
-              aria-label="课程设计初衷视频"
-              autoPlay
-              onError={() => setPlayError(true)}
-              className="aspect-video w-full overflow-hidden rounded-xl"
-              style={{ aspectRatio: "16 / 9" }}
-            />
-          ) : (
-            <button
-              type="button"
-              onClick={() => setPlaying(true)}
-              aria-label="播放课程设计初衷视频"
-              className="experience-focus group relative flex aspect-video w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl bg-zinc-950 text-white"
-            >
-              <DotPattern
-                width={22}
-                height={22}
-                cr={0.6}
-                className="[mask-image:radial-gradient(ellipse_at_center,black,transparent)] text-white/15"
-              />
-              <span className="absolute top-6 left-6 font-mono text-[9px] tracking-[0.22em] text-zinc-500">
-                506 LAB / ELPIS
-              </span>
-              <span
-                className="absolute font-mono text-[clamp(4rem,9vw,8rem)] font-medium tracking-tighter text-white/5"
-                aria-hidden="true"
-              >
-                ELPIS
-              </span>
-              <span className="relative flex size-14 items-center justify-center rounded-full border border-white/20 bg-white/10 backdrop-blur-sm transition-transform motion-safe:group-hover:scale-110">
-                <Play className="ml-0.5 size-5 fill-white" aria-hidden="true" />
-              </span>
-              <span className="relative mt-5 text-sm font-medium">
-                课程设计初衷
-              </span>
-              <span className="relative mt-2 text-[10px] text-zinc-400">
-                点击播放课程视频
-              </span>
-            </button>
-          )}
-          <figcaption className="mt-4 flex items-center justify-between gap-3 px-1 pb-1 text-xs">
-            <span>第一章 · 前言</span>
-            <span className="shrink-0 text-[10px] text-muted-foreground">
-              VIDEO + NOTES
-            </span>
-          </figcaption>
+          <CourseVideo
+            playbackId={playbackId}
+            title="课程设计初衷"
+            chapterLabel="第一章 · 前言"
+            notesHref="/courses/01-introduction/01"
+          />
           <BorderBeam
             size={120}
             duration={12}
             colorFrom="var(--border)"
             colorTo="var(--muted-foreground)"
           />
-        </figure>
+        </div>
       </BlurFade>
     </section>
   )

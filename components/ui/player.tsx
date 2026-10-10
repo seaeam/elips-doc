@@ -1,10 +1,5 @@
-import MuxPlayer, { MuxPlayerProps } from "@mux/mux-player-react"
-import { Backlight } from "./backlight"
+import MuxPlayer, { type MuxPlayerProps } from "@mux/mux-player-react"
 
-const Player = (props: MuxPlayerProps) => (
-  <Backlight className="w-full">
-    <MuxPlayer {...props} />
-  </Backlight>
-)
+const Player = (props: MuxPlayerProps) => <MuxPlayer {...props} />
 
 export default Player
