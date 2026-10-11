@@ -7,7 +7,6 @@ import {
   Workflow,
 } from "lucide-react"
 import { BlurFade } from "@/components/ui/blur-fade"
-import { MagicCard } from "@/components/ui/magic-card"
 import { COURSE_HIGHLIGHTS } from "../../const"
 
 const phases = [
@@ -75,18 +74,12 @@ export function LearningPath() {
               key={item.href}
               inView
               delay={index * 0.06}
-              className="h-full rounded-2xl"
+              className="h-full rounded-xl"
             >
-              <MagicCard
-                className="h-full rounded-2xl"
-                gradientColor="var(--muted)"
-                gradientFrom="var(--muted-foreground)"
-                gradientTo="var(--border)"
-                gradientOpacity={0.55}
-              >
+              <div className="h-full rounded-xl border border-border bg-card transition-colors hover:border-ring/50">
                 <Link
                   href={item.href}
-                  className="experience-focus group block h-full rounded-2xl p-6"
+                  className="experience-focus group block h-full rounded-xl p-6"
                 >
                   <div className="mb-10 flex items-center justify-between">
                     <Icon
@@ -122,7 +115,7 @@ export function LearningPath() {
                     />
                   </div>
                 </Link>
-              </MagicCard>
+              </div>
             </BlurFade>
           )
         })}

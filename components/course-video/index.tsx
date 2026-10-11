@@ -1,10 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import dynamic from "next/dynamic"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import type { MuxPlayerProps } from "@mux/mux-player-react"
+import type {
+  MuxPlayerProps,
+  MuxPlayerRefAttributes,
+} from "@mux/mux-player-react"
 import { RotateCw } from "lucide-react"
 import { COURSE_SECTIONS } from "@/components/course-catalog/const"
 import { cn } from "@/lib/utils"
@@ -15,7 +18,7 @@ const Player = dynamic(() => import("@/components/ui/player"), {
   ssr: false,
   loading: () => (
     <div
-      className="flex aspect-video items-center justify-center rounded-xl bg-zinc-950 text-sm text-zinc-400"
+      className="flex aspect-video items-center justify-center rounded-xl bg-neutral-950 text-sm text-neutral-400"
       role="status"
     >
       正在加载视频…
@@ -39,17 +42,39 @@ function VideoSurface({
   cover: LessonCoverData
 }) {
   const [state, setState] = useState<"idle" | "playing" | "error">("idle")
+  const [attempt, setAttempt] = useState(0)
+  const playerRef = useRef<MuxPlayerRefAttributes>(null)
+  const playRequested = useRef(false)
+  const preloadFailed = useRef(false)
+
+  function startPlayback() {
+    playRequested.current = true
+    setState("playing")
+
+    if (preloadFailed.current) {
+      preloadFailed.current = false
+      setAttempt((value) => value + 1)
+      return
+    }
+
+    // Keep play() within the click gesture and reuse the buffered player.
+    // If the module is still loading, autoPlay starts it when it mounts.
+    void playerRef.current?.play()?.catch(() => {
+      // Media failures go through onError. If the browser blocks playback,
+      // the now-visible native play control lets the user try again.
+    })
+  }
 
   if (state === "error") {
     return (
-      <div className="flex aspect-video flex-col items-center justify-center gap-4 rounded-xl bg-zinc-950 px-5 text-center text-white">
-        <p role="status" className="text-sm leading-7 text-zinc-400">
+      <div className="flex aspect-video flex-col items-center justify-center gap-4 rounded-xl bg-neutral-950 px-5 text-center text-white">
+        <p role="status" className="text-sm leading-7 text-neutral-400">
           视频暂时无法加载，可以先阅读本节笔记。
         </p>
         <button
           type="button"
-          onClick={() => setState("playing")}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-xs transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+          onClick={startPlayback}
+          className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-white/20 bg-white/10 px-4 py-2 text-xs transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         >
           <RotateCw className="size-3.5" aria-hidden="true" />
           重试视频
@@ -57,7 +82,7 @@ function VideoSurface({
         {notesHref && (
           <Link
             href={notesHref}
-            className="rounded text-xs text-zinc-400 underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            className="rounded text-xs text-neutral-400 underline underline-offset-4 hover:text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
           >
             阅读{title}
           </Link>
@@ -66,30 +91,37 @@ function VideoSurface({
     )
   }
 
-  if (state === "playing") {
-    return (
-      <Player
-        {...props}
-        title={title}
-        aria-label={`${title}视频`}
-        autoPlay
-        playsInline
-        onError={(event) => {
-          setState("error")
-          onError?.(event)
-        }}
-        className="block aspect-video w-full overflow-hidden rounded-xl"
-        style={{ ...style, aspectRatio: "16 / 9" }}
-      />
-    )
-  }
-
   return (
-    <VideoCover
-      title={title}
-      cover={cover}
-      onPlay={() => setState("playing")}
-    />
+    <div className="relative">
+      <div
+        aria-hidden={state === "idle"}
+        inert={state === "idle"}
+        className={cn(
+          state === "idle" && "pointer-events-none absolute inset-0 opacity-0"
+        )}
+      >
+        <Player
+          key={attempt}
+          {...props}
+          playerRef={playerRef}
+          title={title}
+          aria-label={`${title}视频`}
+          preload="auto"
+          autoPlay={state === "playing"}
+          playsInline
+          onError={(event) => {
+            preloadFailed.current = true
+            if (playRequested.current) setState("error")
+            onError?.(event)
+          }}
+          className="block aspect-video w-full overflow-hidden rounded-xl"
+          style={{ ...style, aspectRatio: "16 / 9" }}
+        />
+      </div>
+      {state === "idle" && (
+        <VideoCover title={title} cover={cover} onPlay={startPlayback} />
+      )}
+    </div>
   )
 }
 

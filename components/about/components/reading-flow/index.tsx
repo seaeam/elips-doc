@@ -32,7 +32,7 @@ export function ReadingFlow() {
   }
 
   return (
-    <figure className="relative min-w-0 overflow-hidden rounded-xl border border-border bg-muted/20">
+    <figure className="relative min-w-0 overflow-hidden rounded-xl border border-border bg-card">
       <DotPattern
         width={20}
         height={20}
@@ -57,7 +57,7 @@ export function ReadingFlow() {
           <div className="flex flex-col items-center gap-1.5">
             <div
               ref={videoRef}
-              className="flex size-10 items-center justify-center rounded-xl border border-border bg-background sm:size-11"
+              className="flex size-10 items-center justify-center rounded-md border border-border bg-muted/50 sm:size-11"
             >
               <Video className="size-4 text-foreground/75" aria-hidden="true" />
             </div>
@@ -66,7 +66,7 @@ export function ReadingFlow() {
           <div className="flex flex-col items-center gap-1.5">
             <div
               ref={codeRef}
-              className="flex size-10 items-center justify-center rounded-xl border border-border bg-background sm:size-11"
+              className="flex size-10 items-center justify-center rounded-md border border-border bg-muted/50 sm:size-11"
             >
               <Code2 className="size-4 text-foreground/75" aria-hidden="true" />
             </div>
@@ -75,7 +75,7 @@ export function ReadingFlow() {
           <div className="flex flex-col items-center gap-1.5">
             <div
               ref={diagramRef}
-              className="flex size-10 items-center justify-center rounded-xl border border-border bg-background sm:size-11"
+              className="flex size-10 items-center justify-center rounded-md border border-border bg-muted/50 sm:size-11"
             >
               <GitBranch
                 className="size-4 text-foreground/75"
@@ -89,7 +89,7 @@ export function ReadingFlow() {
         <div className="relative z-10 flex flex-col items-center gap-3">
           <div
             ref={notesRef}
-            className="flex size-[4.5rem] flex-col items-center justify-center gap-1.5 rounded-2xl border border-foreground/15 bg-background shadow-sm sm:size-20"
+            className="flex size-[4.5rem] flex-col items-center justify-center gap-1.5 rounded-lg border border-border bg-card sm:size-20"
           >
             <FileText className="size-5 text-foreground" aria-hidden="true" />
             <span className="font-mono text-[10px] font-medium tracking-[0.1em]">
@@ -140,7 +140,7 @@ export function ReadingFlow() {
         </div>
       </div>
 
-      <figcaption className="relative border-t border-border px-5 py-3 text-center text-xs leading-6 text-muted-foreground">
+      <figcaption className="relative border-t border-border bg-muted/50 px-5 py-3 text-center text-xs leading-6 text-muted-foreground">
         视频用于回看演示，笔记用于查找代码和配置。
       </figcaption>
     </figure>

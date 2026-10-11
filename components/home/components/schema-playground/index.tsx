@@ -15,8 +15,10 @@ import {
   Server,
 } from "lucide-react"
 import { BlurFade } from "@/components/ui/blur-fade"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { OrbitingCircles } from "@/components/ui/orbiting-circles"
-import { ShimmerButton } from "@/components/ui/shimmer-button"
 
 const examples = {
   product: {
@@ -82,39 +84,44 @@ export function SchemaPlayground() {
       <div className="mt-10 grid gap-5 lg:grid-cols-[1.7fr_1fr]">
         <BlurFade
           inView
-          className="min-w-0 rounded-2xl border border-border bg-muted/10 p-6 sm:p-8"
+          className="min-w-0 rounded-xl border border-border bg-card p-6 sm:p-8"
         >
           <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium">商品与人员管理</span>
-            <span className="rounded-full border border-border px-2.5 py-1 text-[10px] text-muted-foreground">
+            <Badge
+              variant="outline"
+              className="text-[10px] text-muted-foreground"
+            >
               交互示例
-            </span>
+            </Badge>
           </div>
           <p className="mt-2 text-sm leading-7 text-muted-foreground">
             输入名称试试查询，也可以切换商品和人员模型。
           </p>
           <div className="mt-6 grid min-w-0 gap-4 sm:grid-cols-2">
-            <div className="min-w-0 overflow-hidden rounded-xl bg-zinc-950 text-zinc-200">
+            <div className="min-w-0 overflow-hidden rounded-lg bg-neutral-950 text-neutral-200">
               <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-3">
-                <span className="size-1.5 rounded-full bg-zinc-600" />
-                <span className="size-1.5 rounded-full bg-zinc-600" />
-                <span className="size-1.5 rounded-full bg-zinc-600" />
-                <span className="ml-2 font-mono text-[10px] text-zinc-400">
+                <span className="size-1.5 rounded-full bg-neutral-600" />
+                <span className="size-1.5 rounded-full bg-neutral-600" />
+                <span className="size-1.5 rounded-full bg-neutral-600" />
+                <span className="ml-2 font-mono text-[10px] text-neutral-400">
                   {example.key}.config.js
                 </span>
               </div>
               <pre className="overflow-x-auto p-4 font-mono text-[11px] leading-7">
                 <code>
-                  <span className="text-zinc-500">{"// 字段配置片段\n"}</span>
+                  <span className="text-neutral-500">
+                    {"// 字段配置片段\n"}
+                  </span>
                   {"{\n  "}
-                  <span className="text-zinc-100">{example.field}</span>
+                  <span className="text-neutral-100">{example.field}</span>
                   {": {\n    type: 'string',\n    label: '"}
                   {example.label}
                   {"',\n    tableOption: {\n      visible: true\n    }\n  }\n}"}
                 </code>
               </pre>
             </div>
-            <div className="min-w-0 overflow-hidden rounded-xl border border-border bg-background">
+            <div className="min-w-0 overflow-hidden rounded-lg border border-border bg-muted/50">
               <div className="flex items-center justify-between border-b border-border px-4 py-3 text-[11px]">
                 <span>{example.title}</span>
                 <span className="text-[9px] text-muted-foreground">
@@ -135,7 +142,7 @@ export function SchemaPlayground() {
                   <label htmlFor={searchId} className="sr-only">
                     按{example.label}查询
                   </label>
-                  <input
+                  <Input
                     id={searchId}
                     type="search"
                     value={query}
@@ -143,21 +150,24 @@ export function SchemaPlayground() {
                     placeholder={`按${example.label}查询…`}
                     autoComplete="off"
                     aria-describedby={`${searchId}-results`}
-                    className="h-8 min-w-0 flex-1 rounded border border-border bg-muted/30 px-2 text-foreground outline-none placeholder:text-muted-foreground"
+                    className="h-8 flex-1 bg-card px-2 text-[10px] focus-visible:ring-0 md:text-[10px]"
                   />
-                  <button
+                  <Button
                     type="submit"
-                    className="experience-focus h-8 shrink-0 cursor-pointer rounded bg-foreground px-2.5 text-background transition-opacity hover:opacity-80"
+                    size="sm"
+                    className="px-2.5 text-[10px]"
                   >
                     查询
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="reset"
+                    variant="outline"
+                    size="sm"
                     disabled={!query && !submittedQuery}
-                    className="experience-focus h-8 shrink-0 cursor-pointer rounded border border-border px-2 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:cursor-default disabled:opacity-40"
+                    className="px-2 text-[10px]"
                   >
                     重置
-                  </button>
+                  </Button>
                 </form>
                 <table className="w-full text-left text-[11px]">
                   <caption className="sr-only">{example.title}示例数据</caption>
@@ -200,26 +210,24 @@ export function SchemaPlayground() {
                   aria-atomic="true"
                   className="mt-5 text-[9px] text-muted-foreground"
                 >
-                  {example.title}示例 · 显示 {visibleRows.length} / {example.rows.length} 条
+                  {example.title}示例 · 显示 {visibleRows.length} /{" "}
+                  {example.rows.length} 条
                 </p>
               </div>
             </div>
           </div>
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-            <ShimmerButton
+            <Button
               type="button"
               onClick={() => {
                 setActive(active === "product" ? "user" : "product")
                 resetQuery()
               }}
-              background="var(--foreground)"
-              shimmerColor="#999999"
-              borderRadius="999px"
-              className="experience-focus gap-2 px-4 py-2.5 text-xs text-background"
+              className="text-xs"
             >
               <RotateCw className="size-3.5" aria-hidden="true" />
               切换{active === "product" ? "人员" : "商品"}模型
-            </ShimmerButton>
+            </Button>
             <Link
               href="/courses/06-vue3-domain-model-architecture/01"
               className="experience-focus inline-flex items-center gap-1 rounded text-xs text-muted-foreground hover:text-foreground"
@@ -232,7 +240,7 @@ export function SchemaPlayground() {
         <BlurFade
           inView
           delay={0.1}
-          className="flex flex-col overflow-hidden rounded-2xl border border-border bg-muted/15"
+          className="flex flex-col overflow-hidden rounded-xl border border-border bg-card"
         >
           <div
             className="relative flex h-[280px] shrink-0 items-center justify-center overflow-hidden"

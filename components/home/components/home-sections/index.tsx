@@ -20,7 +20,6 @@ import {
 import { COURSE_SECTIONS } from "@/components/course-catalog/const"
 import { CourseVideo } from "@/components/course-video"
 import { BlurFade } from "@/components/ui/blur-fade"
-import { BorderBeam } from "@/components/ui/border-beam"
 import { Button } from "@/components/ui/button"
 import { DotPattern } from "@/components/ui/dot-pattern"
 import { Marquee } from "@/components/ui/marquee"
@@ -170,7 +169,7 @@ export function HomeIntro({ playbackId }: { playbackId: string }) {
         </Link>
       </BlurFade>
       <BlurFade inView delay={0.1}>
-        <div className="relative overflow-hidden rounded-2xl border border-border bg-muted/10 p-3 sm:p-4">
+        <div className="relative overflow-hidden rounded-xl border border-border bg-card p-3 sm:p-4">
           <div className="mb-3 flex items-center justify-between px-1 text-[10px] text-muted-foreground">
             <span className="flex items-center gap-2">
               <Play className="size-3" /> 课程导览
@@ -183,12 +182,6 @@ export function HomeIntro({ playbackId }: { playbackId: string }) {
             chapterLabel="第一章 · 前言"
             notesHref="/courses/01-introduction/01"
           />
-          <BorderBeam
-            size={120}
-            duration={12}
-            colorFrom="var(--border)"
-            colorTo="var(--muted-foreground)"
-          />
         </div>
       </BlurFade>
     </section>
@@ -199,7 +192,7 @@ export function HomeNextStep() {
   return (
     <BlurFade inView>
       <section
-        className="relative isolate overflow-hidden rounded-3xl border border-border bg-muted/15 px-7 py-12 text-center sm:px-12 sm:py-16"
+        className="relative isolate overflow-hidden rounded-xl border border-border bg-card px-7 py-12 text-center sm:px-12 sm:py-16"
         aria-labelledby="home-next-title"
       >
         <DotPattern
@@ -219,17 +212,12 @@ export function HomeNextStep() {
           目录按原课程排列，可以按章节阅读，也可以搜索小节标题。
         </p>
         <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-          <Button asChild size="lg" className="h-12 gap-3 rounded-full px-6">
+          <Button asChild size="lg" className="gap-3">
             <Link href="/courses">
               打开课程目录 <ArrowRight className="size-4" aria-hidden="true" />
             </Link>
           </Button>
-          <Button
-            asChild
-            variant="ghost"
-            size="lg"
-            className="h-12 rounded-full px-5"
-          >
+          <Button asChild variant="ghost" size="lg">
             <Link href="/about">了解这份笔记</Link>
           </Button>
         </div>

@@ -34,7 +34,7 @@ export function LearningPath() {
             <a
               href={`#chapter-${phase.chapters[0]}`}
               onClick={() => navigateToChapter(phase.chapters[0])}
-              className="group flex h-full flex-col rounded-xl border border-border bg-background p-5 transition-colors hover:bg-muted/50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+              className="group flex h-full flex-col rounded-xl border border-border bg-card p-5 transition-colors hover:bg-muted/50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
             >
               <div className="mb-7 flex items-center justify-between">
                 <span className="font-mono text-xs text-muted-foreground">

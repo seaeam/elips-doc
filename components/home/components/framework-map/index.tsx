@@ -11,7 +11,6 @@ import {
   Server,
 } from "lucide-react"
 import { AnimatedBeam } from "@/components/ui/animated-beam"
-import { BorderBeam } from "@/components/ui/border-beam"
 import { DotPattern } from "@/components/ui/dot-pattern"
 import { cn } from "@/lib/utils"
 
@@ -25,17 +24,14 @@ export function FrameworkMap() {
   const pages = useRef<HTMLDivElement>(null)
   const sdk = useRef<HTMLDivElement>(null)
   const nodeClass =
-    "relative z-10 flex w-[88px] flex-col items-center gap-2 rounded-xl border border-border bg-background px-2 py-3 shadow-sm sm:w-[100px]"
+    "relative z-10 flex w-[88px] flex-col items-center gap-2 rounded-lg border border-border bg-card px-2 py-3 sm:w-[100px]"
   return (
-    <div className="relative isolate min-w-0 overflow-hidden rounded-3xl border border-border/70 bg-muted/15">
-      <div className="relative z-10 flex items-center justify-between border-b border-border/70 px-4 py-4 sm:px-6">
+    <div className="relative isolate min-w-0 overflow-hidden rounded-xl border border-border bg-card">
+      <div className="relative z-10 flex items-center justify-between border-b border-border px-4 py-4 sm:px-6">
         <span className="font-mono text-[10px] tracking-[.16em] text-muted-foreground">
           INSIDE ELPIS
         </span>
-        <div
-          className="flex rounded-full border border-border bg-background p-1"
-          aria-label="框架展示方式"
-        >
+        <div className="flex rounded-lg bg-muted p-1" aria-label="框架展示方式">
           {(
             [
               ["map", "架构总览"],
@@ -48,9 +44,9 @@ export function FrameworkMap() {
               aria-pressed={view === value}
               onClick={() => setView(value)}
               className={cn(
-                "experience-focus cursor-pointer rounded-full px-3 py-1.5 text-[11px] transition-colors",
+                "experience-focus cursor-pointer rounded-md px-3 py-1.5 text-[11px] transition-colors",
                 view === value
-                  ? "bg-foreground text-background"
+                  ? "bg-primary text-primary-foreground"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -96,16 +92,10 @@ export function FrameworkMap() {
           </div>
           <div
             ref={core}
-            className="relative z-10 flex size-[76px] flex-col items-center justify-center gap-1 rounded-2xl border border-foreground/20 bg-foreground text-background shadow-[0_0_50px_-15px_var(--muted-foreground)] sm:size-[92px]"
+            className="relative z-10 flex size-[76px] flex-col items-center justify-center gap-1 rounded-lg border border-border bg-primary text-primary-foreground sm:size-[92px]"
           >
             <Layers3 className="size-6 sm:size-7" aria-hidden="true" />
             <span className="text-sm font-semibold tracking-tight">elpis</span>
-            <BorderBeam
-              colorFrom="#aaaaaa"
-              colorTo="#ffffff"
-              size={50}
-              duration={8}
-            />
           </div>
           <div className="flex flex-col gap-12">
             <div ref={pages} className={nodeClass}>
@@ -192,7 +182,7 @@ export function FrameworkMap() {
           </p>
         </div>
       )}
-      <div className="flex items-center justify-between border-t border-border/70 px-5 py-4 text-[11px] text-muted-foreground sm:px-6">
+      <div className="flex items-center justify-between border-t border-border bg-muted/50 px-5 py-4 text-[11px] text-muted-foreground sm:px-6">
         <span className="flex items-center gap-2">
           <span className="size-1.5 rounded-full bg-foreground" /> 配置驱动 ·
           分层实现

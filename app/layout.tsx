@@ -5,6 +5,7 @@ import { getPageMap } from "nextra/page-map"
 import { Footer, Layout, Navbar } from "nextra-theme-docs"
 import "nextra-theme-docs/style.css"
 import "./globals.css"
+import "./nextra-theme.css"
 
 import { defaultSocialImage, siteConfig } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
@@ -73,9 +74,9 @@ const navbar = (
   <Navbar
     logo={
       <Text3DFlip
-        className="bg-background font-serif"
-        textClassName="bg-background text-foreground"
-        flipTextClassName="bg-background text-foreground"
+        className="font-sans text-base font-semibold tracking-tight"
+        textClassName="bg-card text-foreground"
+        flipTextClassName="bg-card text-foreground"
         rotateDirection="top"
         staggerFrom="first"
         staggerDuration={0.03}
@@ -114,7 +115,10 @@ export default async function RootLayout({
         geist.variable
       )}
     >
-      <Head />
+      <Head
+        color={{ hue: 0, saturation: 0, lightness: { light: 45, dark: 75 } }}
+        backgroundColor={{ light: "rgb(245,245,245)", dark: "rgb(10,10,10)" }}
+      />
       <body>
         <Layout
           banner={banner}

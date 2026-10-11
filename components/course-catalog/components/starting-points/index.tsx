@@ -8,7 +8,6 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { MagicCard } from "@/components/ui/magic-card"
 import { COURSE_SECTIONS } from "../../const"
 
 const STARTING_POINTS = [
@@ -65,14 +64,9 @@ export function StartingPoints() {
           )!
           const Icon = point.icon
           return (
-            <MagicCard
+            <div
               key={point.chapter}
-              className="h-full rounded-xl [&>div:last-child]:h-full"
-              gradientColor="var(--muted)"
-              gradientFrom="var(--muted-foreground)"
-              gradientTo="var(--border)"
-              gradientOpacity={0.65}
-              gradientSize={280}
+              className="h-full rounded-xl border border-border bg-card transition-colors hover:border-ring/50"
             >
               <Link
                 href={section.href}
@@ -106,7 +100,7 @@ export function StartingPoints() {
                   />
                 </p>
               </Link>
-            </MagicCard>
+            </div>
           )
         })}
       </div>
@@ -118,7 +112,7 @@ export function CatalogClosing() {
   return (
     <section
       aria-labelledby="catalog-closing-title"
-      className="relative mt-12 overflow-hidden rounded-xl border border-border bg-muted/25 p-7 md:mt-16 md:p-10"
+      className="relative mt-12 overflow-hidden rounded-xl border border-border bg-card p-7 md:mt-16 md:p-10"
     >
       <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-12">
         <div>

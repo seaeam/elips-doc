@@ -7,7 +7,7 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { Input } from "@/components/ui/input"
 import { COURSE_PHASES, getVisibleLessons } from "../../journey"
 import { useCourseCatalogStore } from "../../store"
 import { SectionCard } from "../section-card"
@@ -54,7 +54,7 @@ export function SectionIndex() {
         </div>
         <p className="text-xs text-muted-foreground">展开章节，点击标题阅读</p>
       </div>
-      <div className="rounded-xl border border-border bg-muted/20 p-4 sm:p-5">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-5">
         <label htmlFor="catalog-search" className="sr-only">
           搜索章节与小节标题
         </label>
@@ -63,7 +63,7 @@ export function SectionIndex() {
             aria-hidden="true"
             className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
           />
-          <input
+          <Input
             id="catalog-search"
             type="search"
             value={query}
@@ -74,20 +74,22 @@ export function SectionIndex() {
             placeholder="搜索章节、小节，如 DSL / webpack"
             autoComplete="off"
             aria-describedby="catalog-result-count"
-            className="h-12 w-full rounded-lg border border-border bg-background pr-11 pl-10 text-base outline-none placeholder:text-muted-foreground/80 focus-visible:ring-2 focus-visible:ring-ring sm:text-sm [&::-webkit-search-cancel-button]:appearance-none"
+            className="h-11 pr-11 pl-10 [&::-webkit-search-cancel-button]:appearance-none"
           />
           {query && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon-sm"
               aria-label="清除搜索"
               onClick={() => {
                 setQuery("")
                 document.getElementById("catalog-search")?.focus()
               }}
-              className="absolute top-1/2 right-2 flex size-8 -translate-y-1/2 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring"
+              className="absolute top-1/2 right-2 -translate-y-1/2 text-muted-foreground"
             >
               <X aria-hidden="true" className="size-4" />
-            </button>
+            </Button>
           )}
         </div>
         <div
@@ -103,20 +105,19 @@ export function SectionIndex() {
             { id: "all", shortTitle: "全部章节" } as const,
             ...COURSE_PHASES,
           ].map((phase) => (
-            <button
+            <Button
               key={phase.id}
               type="button"
+              variant={selectedPhase === phase.id ? "default" : "ghost"}
+              size="sm"
               aria-pressed={selectedPhase === phase.id}
               onClick={() => setSelectedPhase(phase.id)}
-              className={cn(
-                "min-h-9 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-                selectedPhase === phase.id
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-transparent text-muted-foreground hover:border-border hover:bg-background hover:text-foreground"
-              )}
+              className={
+                selectedPhase === phase.id ? "" : "text-muted-foreground"
+              }
             >
               {phase.shortTitle}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
