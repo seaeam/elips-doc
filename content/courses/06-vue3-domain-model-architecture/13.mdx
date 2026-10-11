@@ -26,6 +26,7 @@ description: "完善 tableOption 与 tableConfig，编写 buildDtoSchema 提取�
 新增、导出、批量删除属于整体操作的例子；每条记录后面的编辑、删除则属于行操作。这些例子用于帮助界定配置位置，本节还没有实现完整动作。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[TablePanel] --> B[头部操作区域]
   A --> C[SchemaTable]
@@ -130,7 +131,8 @@ const configSchema = JSON.parse(JSON.stringify(schemaConfig.schema || {}))
 课程把这些无关配置称为“噪音”，并提出 `buildDtoSchema(schema, compName)`：通过组件名称，提取该组件真正需要的数据。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[原始 Schema] --> B[buildDtoSchema]
   C[compName 为 table] --> B
   B --> D[基础字段信息]

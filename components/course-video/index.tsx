@@ -11,8 +11,11 @@ import type {
 import { RotateCw } from "lucide-react"
 import { COURSE_SECTIONS } from "@/components/course-catalog/const"
 import { cn } from "@/lib/utils"
+import { formatWatchTime } from "@/lib/learning-progress"
+import { LessonCompletion } from "@/components/learning-progress/lesson-completion"
 import { getLessonCover, type LessonCoverData } from "./cover-data"
 import { VideoCover } from "./video-cover"
+import { useVideoProgress } from "./use-video-progress"
 
 const Player = dynamic(() => import("@/components/ui/player"), {
   ssr: false,
@@ -37,17 +40,26 @@ function VideoSurface({
   onError,
   style,
   cover,
+  coursePath,
   ...props
 }: Omit<CourseVideoProps, "chapterLabel" | "className"> & {
   cover: LessonCoverData
+  coursePath: string
 }) {
   const [state, setState] = useState<"idle" | "playing" | "error">("idle")
   const [attempt, setAttempt] = useState(0)
   const playerRef = useRef<MuxPlayerRefAttributes>(null)
   const playRequested = useRef(false)
   const preloadFailed = useRef(false)
+  const progress = useVideoProgress(
+    coursePath,
+    props.playbackId ?? props.src ?? "",
+    playerRef,
+    props.startTime
+  )
 
-  function startPlayback() {
+  function startPlayback(fromBeginning = false) {
+    progress.preparePlayback(fromBeginning)
     playRequested.current = true
     setState("playing")
 
@@ -73,7 +85,7 @@ function VideoSurface({
         </p>
         <button
           type="button"
-          onClick={startPlayback}
+          onClick={() => startPlayback()}
           className="inline-flex cursor-pointer items-center gap-2 rounded-md border border-white/20 bg-white/10 px-4 py-2 text-xs transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
         >
           <RotateCw className="size-3.5" aria-hidden="true" />
@@ -108,7 +120,32 @@ function VideoSurface({
           aria-label={`${title}视频`}
           preload="auto"
           autoPlay={state === "playing"}
+          startTime={progress.startTime}
           playsInline
+          onLoadedMetadata={(event) => {
+            progress.onLoadedMetadata()
+            props.onLoadedMetadata?.(event)
+          }}
+          onPlaying={(event) => {
+            progress.onPlaying()
+            props.onPlaying?.(event)
+          }}
+          onTimeUpdate={(event) => {
+            progress.onTimeUpdate()
+            props.onTimeUpdate?.(event)
+          }}
+          onPause={(event) => {
+            progress.onPause()
+            props.onPause?.(event)
+          }}
+          onSeeked={(event) => {
+            progress.onSeeked()
+            props.onSeeked?.(event)
+          }}
+          onEnded={(event) => {
+            progress.onEnded()
+            props.onEnded?.(event)
+          }}
           onError={(event) => {
             preloadFailed.current = true
             if (playRequested.current) setState("error")
@@ -119,7 +156,27 @@ function VideoSurface({
         />
       </div>
       {state === "idle" && (
-        <VideoCover title={title} cover={cover} onPlay={startPlayback} />
+        <>
+          <VideoCover
+            title={title}
+            cover={cover}
+            resumeTime={progress.resumeTime}
+            completed={progress.completed}
+            onPlay={() => startPlayback()}
+          />
+          {progress.resumeTime > 0 && (
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 px-1 text-xs text-muted-foreground">
+              <span>上次看到 {formatWatchTime(progress.resumeTime)}</span>
+              <button
+                type="button"
+                onClick={() => startPlayback(true)}
+                className="cursor-pointer rounded underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+              >
+                从头播放
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   )
@@ -146,11 +203,15 @@ export function CourseVideo({
       : "课程视频")
 
   return (
-    <figure className={cn("not-prose @container m-0 min-w-0", className)}>
+    <figure
+      id="course-video"
+      className={cn("not-prose @container m-0 min-w-0 scroll-mt-28", className)}
+    >
       <VideoSurface
-        key={props.playbackId ?? props.src ?? props.title}
+        key={`${coursePath}:${props.playbackId ?? props.src ?? props.title}`}
         {...props}
         cover={cover}
+        coursePath={coursePath}
       />
       <figcaption className="mt-4 flex items-start justify-between gap-3 px-1 pb-1 text-xs leading-6">
         <span className="min-w-0 text-foreground">{caption}</span>
@@ -158,6 +219,10 @@ export function CourseVideo({
           VIDEO + NOTES
         </span>
       </figcaption>
+      <LessonCompletion
+        href={coursePath}
+        mediaId={props.playbackId ?? props.src ?? ""}
+      />
     </figure>
   )
 }

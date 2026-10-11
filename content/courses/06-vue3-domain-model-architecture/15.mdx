@@ -70,6 +70,7 @@ const schemaTableRef = ref(null)
 因此可以统一进入 `operationHandler(buttonConfig, rowData)`。头部点击时只传按钮配置，SchemaTable 发出事件时则同时传配置与行数据。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[头部按钮点击] --> C[operationHandler]
   B[SchemaTable 行按钮点击] --> C

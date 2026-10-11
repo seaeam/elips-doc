@@ -51,7 +51,8 @@ app/public/
 这个现象与上一节的兜底路由有关：服务端还不知道应该从哪个目录返回静态文件，因此资源请求没有得到文件响应，反而进入兜底逻辑，重定向到首页。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[页面请求 CSS] --> B[没有静态文件处理能力]
   B --> C[落入路由兜底]
   C --> D[302 跳转首页]
@@ -106,6 +107,7 @@ app/
 这里没有立即接入数据库或外部服务，而是先返回一组模拟数据。这样可以先排除网络和存储因素，集中验证 Loader、路由与调用关系。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[GET /api/project/list] --> B[Project Router]
   B --> C[ProjectController.getList]
@@ -226,6 +228,7 @@ const projects = result.data
 采用类结构的一个价值，在这里显现出来：业务控制器可以继承基类，直接使用公共方法。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[BaseController] --> B[统一成功返回]
   A --> C[统一失败返回]
@@ -375,7 +378,8 @@ async getList(ctx) {
 每增加一个中间件，就在请求处理链路上增加一层能力。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[POST JSON 请求] --> B[bodyparser 解析请求体]
   B --> C[结果挂到 ctx.request.body]
   C --> D[Router 匹配接口]

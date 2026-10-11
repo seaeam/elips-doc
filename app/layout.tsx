@@ -10,6 +10,8 @@ import "./nextra-theme.css"
 import { defaultSocialImage, siteConfig } from "@/lib/site-config"
 import { cn } from "@/lib/utils"
 import Text3DFlip from "@/components/ui/text-3d-flip"
+import { FloatingLearning } from "@/components/learning-progress/floating-learning"
+import { withLearningStatus } from "@/components/learning-progress/page-map"
 
 const geist = Geist({
   subsets: ["latin"],
@@ -123,7 +125,7 @@ export default async function RootLayout({
         <Layout
           banner={banner}
           navbar={navbar}
-          pageMap={await getPageMap()}
+          pageMap={withLearningStatus(await getPageMap())}
           footer={footer}
           editLink={null}
           feedback={{
@@ -132,6 +134,7 @@ export default async function RootLayout({
         >
           {children}
         </Layout>
+        <FloatingLearning />
       </body>
     </html>
   )

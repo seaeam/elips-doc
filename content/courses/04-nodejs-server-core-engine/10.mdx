@@ -28,6 +28,7 @@ description: "设计 Router Schema 的路径、方法和参数位置约定，使
 如果每个 Controller 都各自编写判断，不同接口会重复相同代码，错误结构也容易不一致。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[请求进入] --> B[异常处理中间件]
   B --> C[签名与时效检查]
@@ -105,7 +106,8 @@ if (!valid) {
 编译结果 `validate` 是函数；执行这个函数得到的 `valid` 才是本次数据是否通过检查的布尔值。失败详情从校验函数的 `errors` 中读取。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[JSON Schema] --> B[Ajv compile]
   B --> C[校验函数]
   D[真实请求参数] --> C
@@ -297,6 +299,7 @@ JSON Schema 的 `$schema` 字段声明的是规则规范版本。不同版本可
 这个现象把前后两节联系起来：参数中间件自己也可能写错，它抛出的运行时异常仍然需要外层兜底。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[执行参数中间件] --> B{规则是否成功编译与执行}
   B -->|运行时报错| C[外层异常中间件记录错误]
@@ -366,7 +369,8 @@ axios.request({
 功能开发在独立分支上完成，Review 后合并到 `develop`。远端合并成功后，本地也要切回 `develop` 并拉取更新。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[功能分支完成阶段开发] --> B[提交并发起合并请求]
   B --> C[代码 Review 与交流]
   C --> D[合并到远端 develop]

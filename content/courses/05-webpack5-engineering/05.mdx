@@ -28,6 +28,7 @@ description: "围绕「webpack5 前端工程化搭建（4）」整理的课程�
 这三件事分别对应监听、编译与通知。热更新不是单独加一个插件就自动出现的效果，而是服务端持续编译、资源交付和浏览器客户端共同配合的结果。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["修改并保存 Vue 或 JS 文件"] --> B["监听到文件变化"]
   B --> C["webpack 重新编译"]

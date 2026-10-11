@@ -87,6 +87,7 @@ const model = { productName: "Vue 实战课程", price: 99 };
 `schemaKey` 是字段名，例如 productName。它决定最终提交对象的键。`schema` 是这个字段的描述，用来读取 label、type、约束和 option。`model` 是这个字段的初始值，例如“Vue 实战课程”，并不是整个商品对象。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[完整 schema.properties] --> B[SchemaForm 遍历字段]
   C[完整 model 对象] --> B

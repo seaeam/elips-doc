@@ -26,7 +26,8 @@ description: "围绕「elpis 前端基础建设（2）」整理的课程复盘�
 课程在公共目录中创建请求文件，使这条桥梁有一个统一入口。它属于前端基础建设，不是独立于整个框架的炫技功能。能否解释这个入口承担了哪些约定，比“封装过 axios”这个名称更有意义。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["页面或业务组件"] --> B["公共请求方法"]
   B --> C["参数适配与签名"]
   C --> D["axios 发起 HTTP 请求"]

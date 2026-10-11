@@ -42,6 +42,7 @@ description: "技术栈选型课程讲解 "
 整个 ELPIS 系统可以分成三层：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[展示层<br/>页面展示与用户交互] --> B[BFF 层<br/>业务聚合与服务组织]
   B --> C[数据层<br/>数据存储与日志记录]
@@ -75,6 +76,7 @@ BFF 层负责接口组织、业务逻辑聚合、服务转发和中间层能力�
 可以把这套思路整理成一个流程：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[明确项目场景] --> B[列出可选技术]
   B --> C[对比核心差异]
@@ -99,7 +101,8 @@ flowchart TD
 这两个部分都是服务端系统里非常基础，也非常关键的能力。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[数据层] --> B[数据库<br/>存储和操作数据]
   A --> C[日志系统<br/>定位问题和记录服务状态]
 ```
@@ -160,6 +163,7 @@ MongoDB 是文档型数据库，数据更接近 JSON 或 JavaScript Object。每
 这些因素综合起来，MySQL 更符合课程项目的目标。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[数据库选型] --> B[生态更成熟]
   A --> C[后端使用更广泛]
@@ -182,7 +186,8 @@ flowchart TD
 请求不再是页面直接到后端接口，而是先进入 BFF，再由 BFF 转发或聚合后端服务。中间多了一层服务，就必须有对应的日志记录。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[前端页面] --> B[BFF 层]
   B --> C[后端 API]
   B --> D[日志记录<br/>请求、错误、性能、服务状态]
@@ -224,7 +229,8 @@ Log4js 配置能力更强，支持更复杂的日志层级和记录方式，更�
 所以，数据层的最终结果是：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[数据层] --> B[MySQL<br/>业务数据存储]
   A --> C[Log4js<br/>服务日志记录]
 ```
@@ -249,6 +255,7 @@ BFF 层的选型和课程对象关系很大。
 Node.js 使用 JavaScript，前端同学至少可以先降低语言陌生感，把主要精力放在后端世界观、服务端运行流程和 BFF 架构设计上。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[前端开发者学习后端] --> B{直接学习 Java / Go / Python}
   B --> C[语言陌生]
@@ -282,7 +289,8 @@ Node.js 使用 JavaScript，运行时也基于 V8。对前端开发者来说，�
 这里的学习路径可以理解为：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[熟悉 JavaScript] --> B[使用 Node.js 进入后端]
   B --> C[理解服务端世界观]
   C --> D[掌握接口、分层、数据库、日志]
@@ -312,6 +320,7 @@ Koa 处在一个比较合适的位置。
 它足够轻量，可以让学习者看到服务端框架的核心运行逻辑；同时又提供了基本抽象，不需要从最底层开始手写所有内容。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[Node.js 服务框架选择] --> B[原生 HTTP<br/>太底层，开发成本高]
   A --> C[Koa2<br/>轻量，适合理解核心机制]
@@ -390,6 +399,7 @@ Webpack5 在这些方面更适合作为工程化学习入口。
 它能让学习者更完整地接触前端工程化中的关键概念。等通过 Webpack5 理解工程化之后，再迁移到 Vite 或其他构建工具，难度会低很多。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[选择 Webpack5] --> B[理解模块打包]
   A --> C[理解资源处理]
@@ -419,6 +429,7 @@ flowchart TD
 整体架构可以整理成下面这样：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[展示层] --> A1[Vue3]
   A --> A2[Element Plus]

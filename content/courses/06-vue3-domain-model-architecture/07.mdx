@@ -26,6 +26,7 @@ description: "搭建 Dashboard 入口与 HeaderView，通过 Pinia 连接菜单�
 HeaderView 则属于 Dashboard。它知道哪个插槽应该显示菜单，哪个插槽应该显示项目切换，以及菜单数据来自哪个 Store。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["Dashboard 页面"] --> B["HeaderView"]
   B --> C["HeaderContainer"]
@@ -72,7 +73,8 @@ Dashboard 与 Project List 是两个独立页面，因此需要在 entry 中增�
 整个项目有多个 entry，所以从站点层面看是多页面应用。进入 Dashboard 之后，又由 Vue 创建一个应用实例，内部模块交给 Vue Router 切换，因此这个入口内部仍然可以按单页面应用组织。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["站点多页面入口"] --> B["project-list 页面"]
   A --> C["dashboard 页面"]
   C --> D["一个 Vue 应用实例"]
@@ -137,6 +139,7 @@ defineProps({
 这些数据不是组件创建时立即存在，而是在异步请求完成后写入。使用 Pinia，可以让入口负责写入，视图负责响应，而不必把所有中间状态沿多层组件逐个传递。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["Dashboard 请求项目配置"] --> B["Menu Store"]
   B --> C["HeaderView 顶部菜单"]

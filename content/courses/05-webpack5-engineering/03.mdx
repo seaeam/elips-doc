@@ -36,6 +36,7 @@ description: "围绕「webpack5 前端工程化搭建（2）」整理的课程�
 解决方式是把入口命名变成约定：页面代码放在 `app/pages` 中，入口文件以 `entry.` 开头、以 `.js` 结尾。构建时扫描所有符合约定的文件，再从同一份扫描结果构造 entry 与模板插件列表。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["扫描 app/pages 中的 entry.*.js"] --> B["取得入口文件路径"]
   B --> C["从文件名提取入口名称"]
@@ -177,7 +178,8 @@ webpack 对重叠规则需要作选择。优先级数值越大，优先级越高
 这类问题不会必然触发语法错误。配置本身合法，构建也可能成功，但工程结果偏离设计。课程通过查看实际产物发现问题，再回到分组条件和优先级分析原因，最终将 vendor 优先级调整为 `20`。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["Vue 等第三方模块"] --> B["匹配 node_modules"]
   A --> C["同时被多个入口引用"]
   B --> D["vendor 分组"]

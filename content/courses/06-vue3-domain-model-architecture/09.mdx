@@ -67,7 +67,8 @@ module.exports = {
 最后展开店铺设置，点击两个子项，才真正验证到 group、SubMenu 与菜单事件的组合。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["增加 jd 项目配置"] --> B["模型解析器合并"]
   B --> C["应用列表出现京东"]
   C --> D["进入 Dashboard"]
@@ -169,6 +170,7 @@ npm run build
 路由表恰好同时存在两处相同视图引用：头部模块路由引用 iframe，Sider 子路由又引用 iframe；Schema 和 todo 也有相似结构。Sider 本身还可能在正常路由和兜底规则中再次出现。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["头部 iframe 路由"] --> C["同一个 iframe 组件"]
   B["Sider iframe 子路由"] --> C
@@ -220,7 +222,8 @@ flowchart TD
 构建阶段回答“拆成了什么”，浏览器阶段回答“什么时候加载”。独立文件即使存在，也可能被页面提前引用；反过来，几个视图共享一个异步包，也不必然意味着完全没有延迟加载，只是加载粒度与原先目标不同。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["源码动态 import"] --> B["构建拆包"]
   B --> C["检查组件所属文件"]
   C --> D["运行页面"]

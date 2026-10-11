@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { ArrowUpRight } from "lucide-react"
+import { useLearningProgress } from "@/components/learning-progress/store"
+import { LessonStatus } from "@/components/learning-progress/lesson-status"
 
 import { getLessonHref } from "../../utils"
 
@@ -35,6 +36,7 @@ export function LessonCollapsibleList({
   lessonIndices,
   query,
 }: LessonCollapsibleListProps) {
+  const progress = useLearningProgress()
   return (
     <ol className="grid grid-cols-1 gap-x-7 sm:grid-cols-2">
       {lessonIndices.map((index) => (
@@ -45,7 +47,7 @@ export function LessonCollapsibleList({
           <Link
             href={getLessonHref(sectionHref, index)}
             prefetch={false}
-            className="catalog-lesson-link group grid min-h-12 grid-cols-[1.5rem_minmax(0,1fr)_1rem] items-start gap-2 rounded-sm py-3 text-sm text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+            className="catalog-lesson-link grid min-h-12 grid-cols-[1.5rem_minmax(0,1fr)_1rem] items-start gap-2 rounded-sm py-3 text-sm text-muted-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
           >
             <span
               aria-hidden="true"
@@ -56,9 +58,9 @@ export function LessonCollapsibleList({
             <span className="leading-7">
               <LessonTitle title={lessons[index]} query={query} />
             </span>
-            <ArrowUpRight
-              aria-hidden="true"
-              className="mt-1.5 size-3.5 text-muted-foreground opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100"
+            <LessonStatus
+              record={progress.lessons[getLessonHref(sectionHref, index)]}
+              className="mt-1.5"
             />
           </Link>
         </li>

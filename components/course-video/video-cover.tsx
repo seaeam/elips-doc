@@ -1,5 +1,6 @@
 import { Play } from "lucide-react"
 import { CoverArtwork } from "./cover-artwork"
+import { formatWatchTime } from "@/lib/learning-progress"
 import type { LessonCoverData } from "./cover-data"
 import styles from "./cover.module.css"
 
@@ -7,16 +8,26 @@ export function VideoCover({
   title,
   cover,
   onPlay,
+  resumeTime = 0,
+  completed = false,
 }: {
   title: string
   cover: LessonCoverData
   onPlay: () => void
+  resumeTime?: number
+  completed?: boolean
 }) {
+  const action =
+    resumeTime > 0 ? "继续观看" : completed ? "重新观看" : "播放本节"
   return (
     <button
       type="button"
       onClick={onPlay}
-      aria-label={"播放" + title + "视频"}
+      aria-label={
+        resumeTime > 0
+          ? `继续观看${title}视频，从${formatWatchTime(resumeTime)}开始`
+          : "播放" + title + "视频"
+      }
       className={styles.cover}
       data-slot="video-cover"
       data-chapter={cover.chapterNumber}
@@ -39,7 +50,14 @@ export function VideoCover({
               <Play aria-hidden="true" />
             </span>
             <span>
-              播放本节<span className={styles.watchNote}>VIDEO LESSON</span>
+              {action}
+              <span className={styles.watchNote}>
+                {resumeTime > 0
+                  ? `从 ${formatWatchTime(resumeTime)} 继续`
+                  : completed
+                    ? "本节已完成"
+                    : "VIDEO LESSON"}
+              </span>
             </span>
           </span>
         </span>

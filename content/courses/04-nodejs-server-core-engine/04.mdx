@@ -34,6 +34,7 @@ description: "围绕「elpis-core 内核引擎设计」整理的课程复盘笔�
 这一节的主题可以概括为：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[项目运行在 Node.js 上] --> B[需要搭建 BFF 服务框架]
   B --> C[设计 elpis-core 内核引擎]
@@ -61,6 +62,7 @@ Koa 本身提供了基础 Web 服务能力和中间件机制，但它不会强�
 可以这样理解：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[Koa] --> B[提供基础 Web 服务能力]
   B --> C[elpis-core]
@@ -90,7 +92,8 @@ elpis-core 内部会有不同 Loader。每个 Loader 负责扫描和解析某一
 这两件事之间的关系如下：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[规范目录结构] --> B[开发者按规则编写文件]
   B --> C[elpis-core 启动]
   C --> D[Loader 扫描文件]
@@ -175,6 +178,7 @@ app
 这个过程可以整理为：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[项目启动] --> B[elpis-core 初始化]
   B --> C[执行各类 Loader]
@@ -201,7 +205,8 @@ flowchart TD
 elpis-core 的工作，就是把这两种状态连接起来。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[运行前<br/>静态目录和文件] --> B[elpis-core]
   B --> C[Loader 解析]
   C --> D[运行时<br/>内存中的模块和能力]
@@ -289,6 +294,7 @@ BFF 层的请求处理过程，会和前面讲过的三层结构对应起来。
 请求进入系统后，先经过接入层，再进入业务层，最后根据需要调用服务层。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[客户端请求] --> B[接入层]
   B --> B1[Router 路由分发]
@@ -332,6 +338,7 @@ GET /api/user/list
 请求进入服务端之后，大致流程如下：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[API 请求进入服务端] --> B[Router 分发]
   B --> C[Router Schema 参数校验]
@@ -375,6 +382,7 @@ localhost:3000/index.html
 页面请求的流程可以整理为：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[页面请求进入服务端] --> B[Router 分发到页面处理逻辑]
   B --> C[经过筛选和通用中间件]
@@ -404,6 +412,7 @@ flowchart TD
 可以进一步整理成一张图：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[elpis-core] --> B[承接开发者写好的文件]
   B --> C[扫描规范目录]
@@ -433,6 +442,7 @@ flowchart TD
 可以把实现范围理解为：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[用户编写规范文件] --> B[router / schema / middleware / controller / service]
   B --> C[elpis-core 解析器]
@@ -458,7 +468,8 @@ elpis-core 解析文件，是底层框架能力。
 学习方式应该是先记住整体结构，再在后续写代码时不断回看。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[先看设计图] --> B[建立整体概念]
   B --> C[后续写代码]
   C --> D[回看设计图]

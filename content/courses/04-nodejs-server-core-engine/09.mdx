@@ -28,6 +28,7 @@ description: "通过 Extend 提供日志能力，用洋葱模型统一捕获异�
 本节围绕这两个问题增加基础能力，再通过签名与时效检查验证中间件如何在进入业务前拦截请求。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[请求进入服务] --> B[异常处理中间件]
   B --> C[API 签名与时间检查]
@@ -227,6 +228,7 @@ ctx.status = 302
 回到 Middleware Loader 打印挂载结果，发现期望的 `errorHandler` 名称不正确。进一步查看路径截取，发现前缀长度多计算了一个字符，导致文件名首部被截掉。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[异常未被统一处理] --> B[制造确定的业务异常]
   B --> C[检查异常中间件日志]

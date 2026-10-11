@@ -1,4 +1,6 @@
 import { ChevronDown } from "lucide-react"
+import { useLearningProgress } from "@/components/learning-progress/store"
+import { getLessonHref } from "../../utils"
 
 import {
   Collapsible,
@@ -21,6 +23,10 @@ export function SectionCard({ sectionHref, lessonIndices }: SectionCardProps) {
   )
   const query = useCourseCatalogStore((state) => state.query)
   const { lessons, isExpanded, setLessonsOpen } = useSectionLessons(sectionHref)
+  const progress = useLearningProgress()
+  const completedCount = lessons.filter(
+    (_, index) => progress.lessons[getLessonHref(sectionHref, index)]?.completed
+  ).length
 
   if (!section) return null
 
@@ -66,11 +72,16 @@ export function SectionCard({ sectionHref, lessonIndices }: SectionCardProps) {
               </span>
             </span>
             <span className="flex items-center gap-2 pt-1 text-xs leading-6 font-normal text-muted-foreground sm:gap-3">
-              <span className="whitespace-nowrap">
+              <span className="text-right whitespace-nowrap">
                 {query.trim() && lessonIndices.length !== lessons.length
                   ? `${lessonIndices.length}/${lessons.length}`
                   : lessons.length}{" "}
                 节
+                {completedCount > 0 && (
+                  <span className="block text-[10px] text-foreground">
+                    已完成 {completedCount}/{lessons.length}
+                  </span>
+                )}
               </span>
               <ChevronDown
                 aria-hidden="true"

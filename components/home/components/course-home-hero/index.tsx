@@ -1,5 +1,9 @@
 import Link from "next/link"
-import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react"
+import { ArrowDown, ArrowUpRight } from "lucide-react"
+import {
+  LearningAction,
+  LearningSummary,
+} from "@/components/learning-progress/continue-learning"
 
 import { AnimatedShinyText } from "@/components/ui/animated-shiny-text"
 import { BlurFade } from "@/components/ui/blur-fade"
@@ -43,17 +47,14 @@ export function CourseHomeHero() {
             构建，以及框架的封装与发布。
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Button asChild size="lg" className="home-primary-action gap-3">
-              <Link href="/courses/01-introduction/01">
-                开始学习 <ArrowRight aria-hidden="true" />
-              </Link>
-            </Button>
+            <LearningAction className="home-primary-action" />
             <Button asChild variant="outline" size="lg" className="gap-3">
               <Link href="/courses">
                 课程目录 <ArrowUpRight aria-hidden="true" />
               </Link>
             </Button>
           </div>
+          <LearningSummary className="mt-5" />
           <div className="mt-8 flex items-center gap-3 text-xs text-muted-foreground">
             <span className="flex -space-x-1.5" aria-hidden="true">
               {["{ }", "</>", "⌘"].map((symbol) => (

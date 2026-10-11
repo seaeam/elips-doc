@@ -30,6 +30,7 @@ description: "完成 Controller、Service、Config、Extend 和 Router Loader，
 下面的代码是按课堂思路整理的实现示例，用于解释目录约定和执行过程。它与前一节的 Loader 设计衔接，不是对视频画面中源码的逐字转录。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[上一节的启动入口和基础 Loader] --> B[加载 Controller]
   B --> C[加载 Service]
@@ -141,7 +142,8 @@ const instance = new Controller(app)
 工厂函数中的 `app` 可以通过闭包被控制器方法使用；构造函数如果需要，也可以接收实例化时的参数。不要把“加载模块”“调用工厂”“实例化类”混成同一个动作。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[require 文件] --> B[得到工厂函数]
   B --> C[传入 app 执行工厂]
   C --> D[得到 Controller 类]
@@ -254,6 +256,7 @@ const configPath = path.resolve(app.baseDir, "config")
 合并过程如下：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[config.default.js] --> D[合并配置]
   B[app.env 判断当前环境] --> C[读取对应环境文件]
@@ -451,6 +454,7 @@ module.exports = (app) => {
 请求阶段才真正执行业务：请求经过中间件进入路由和 Controller，由 Controller 调用 Service，再沿中间件链返回响应。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[页面或 API 请求] --> B[全局中间件前置逻辑]
   B --> C[匹配业务路由]

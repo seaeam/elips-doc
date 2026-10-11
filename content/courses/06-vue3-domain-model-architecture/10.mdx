@@ -26,6 +26,7 @@ description: "实现 SiderContainer 与 SiderView，区分头部 key 和 siderKe
 现在需要根据 `siderConfig.menu` 真正生成左侧菜单，并在右侧显示选中菜单对应的子页面。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["头部菜单选择 Sider 模块"] --> B["读取 siderConfig"]
   B --> C["左侧菜单"]
@@ -250,6 +251,7 @@ sider-view
 因此首次进入时，需要选择第一个可点击菜单，并执行一次公共导航逻辑，使右侧立即出现内容。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["同步 Sider 选中状态"] --> B{URL 能否找到有效 siderKey}
   B -- 能 --> C["显示对应选中项"]

@@ -40,6 +40,7 @@ description: "从 searchOption 提取搜索 Schema，覆盖路由默认值，定
 进入某个菜单后，`modelType` 决定使用 SchemaView、IframeView、CustomView 或带侧边栏的视图结构。只有进入 SchemaView 这一支，才会继续解释 `schemaConfig` 中的 API、Schema 和各类组件配置。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[领域模型与项目 DSL] --> B[菜单与视图类型]
   B --> C[SchemaView]
@@ -159,7 +160,8 @@ function applyRouteDefaults(searchSchema, query) {
 `useSchema` 输出 `searchSchema`、`searchConfig`，SchemaView 再把它们加入 `schemaViewData`。SearchPanel 注入自己需要的状态，然后通过 Props 传给 SchemaSearchBar。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[useSchema] --> B[SchemaView provide]
   B --> C[SearchPanel inject]
   C --> D[SchemaSearchBar props]
@@ -204,6 +206,7 @@ defineExpose({ reset: onReset })
 因此搜索栏中的每个子控件也需要 `load` 事件。父搜索栏知道每个控件都准备好后，再向外报告整个搜索区加载完成。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[输入框初始化] --> D[各控件 load]
   B[静态下拉初始化] --> D

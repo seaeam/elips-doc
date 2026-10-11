@@ -26,7 +26,8 @@ description: "以登录场景接入 MySQL 与 Knex，梳理用户表、数据库
 本节从登录场景出发，开发者身份从“写框架”切换为“使用框架写业务”。当业务需要数据库，而框架还没有统一入口时，就反过来补充框架能力；当登录页面需要账号规则时，则留在业务侧实现。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["业务项目需要登录"] --> B["发现需要数据库访问能力"]
   B --> C["框架增加 database Extend"]
   C --> D["业务 Service 查询用户"]
@@ -192,7 +193,8 @@ module.exports = (app) => {
 具体导出形态应与前面 Extend Loader 的约定一致。关键链路是：业务提供环境配置，框架按配置初始化，运行时统一暴露数据库入口。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["业务环境 db 配置"] --> B["Config Loader"]
   B --> C["database Extend"]
   C --> D["Knex 实例"]

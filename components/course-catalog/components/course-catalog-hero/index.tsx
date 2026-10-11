@@ -1,5 +1,8 @@
-import Link from "next/link"
-import { ArrowDown, ArrowRight, BookOpen } from "lucide-react"
+import { ArrowDown, BookOpen } from "lucide-react"
+import {
+  LearningAction,
+  LearningSummary,
+} from "@/components/learning-progress/continue-learning"
 import { motion, useReducedMotion } from "motion/react"
 
 import { BlurFade } from "@/components/ui/blur-fade"
@@ -73,11 +76,10 @@ export function CourseCatalogHero() {
               这里收录了课程各节的笔记，按原课程顺序排列。可以从第一章开始阅读，也可以按服务端、页面组件等内容筛选，或直接搜索小节标题。
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild size="lg" className="h-11 gap-3 px-5">
-                <Link href="/courses/01-introduction/01">
-                  从第一节开始 <ArrowRight aria-hidden="true" />
-                </Link>
-              </Button>
+              <LearningAction
+                defaultLabel="从第一节开始"
+                className="h-11 px-5"
+              />
               <Button
                 asChild
                 variant="outline"
@@ -89,6 +91,7 @@ export function CourseCatalogHero() {
                 </a>
               </Button>
             </div>
+            <LearningSummary className="mt-5" />
           </div>
           <div className="border-t border-border pt-6 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
             <div aria-labelledby="catalog-distribution-title">

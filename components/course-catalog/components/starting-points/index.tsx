@@ -1,13 +1,11 @@
 import Link from "next/link"
-import {
-  ArrowRight,
-  ArrowUpRight,
-  Braces,
-  Compass,
-  ServerCog,
-} from "lucide-react"
+import { ArrowUpRight, Braces, Compass, ServerCog } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import {
+  LearningAction,
+  LearningSummary,
+} from "@/components/learning-progress/continue-learning"
+import { useLearningProgress } from "@/components/learning-progress/store"
 import { COURSE_SECTIONS } from "../../const"
 
 const STARTING_POINTS = [
@@ -109,6 +107,8 @@ export function StartingPoints() {
 }
 
 export function CatalogClosing() {
+  const progress = useLearningProgress()
+  const hasProgress = Object.keys(progress.lessons).length > 0
   return (
     <section
       aria-labelledby="catalog-closing-title"
@@ -123,18 +123,17 @@ export function CatalogClosing() {
             id="catalog-closing-title"
             className="mt-4 text-2xl leading-snug font-semibold tracking-tight md:text-3xl"
           >
-            从第一节开始阅读
+            {hasProgress ? "接着上次的进度学习" : "从第一节开始阅读"}
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-7 text-muted-foreground">
-            第一章介绍课程背景和学习方式。笔记的来源、整理方式和使用说明，可以在关于页查看。
+            {hasProgress
+              ? "每节课的观看位置都会自动保存，可以随时回来继续。"
+              : "第一章介绍课程背景和学习方式。笔记的来源、整理方式和使用说明，可以在关于页查看。"}
           </p>
+          <LearningSummary className="mt-5" />
         </div>
         <div className="flex flex-col items-start gap-4">
-          <Button asChild size="lg" className="h-11 gap-4 px-5">
-            <Link href={COURSE_SECTIONS[0].href}>
-              开始阅读 <ArrowRight aria-hidden="true" />
-            </Link>
-          </Button>
+          <LearningAction defaultLabel="开始阅读" className="h-11 gap-4 px-5" />
           <Link
             href="/about"
             className="text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"

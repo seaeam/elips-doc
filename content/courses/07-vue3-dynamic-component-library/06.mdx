@@ -135,7 +135,8 @@ defineExpose({ name, show })
 这里沿用上一节对外暴露的实例协议，调度名称为 `detailPanel`。仅设置 Vue 组件自身的显示名称，不等于已经向父级实例查找暴露这个字段。还需要检查文件是否被引入、是否加入组件集合，以及配置名称与实例名称是否一致。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[按钮配置的目标名称] --> B[动态组件查找]
   C[组件声明与注册名称] --> B
   B --> D{名称是否匹配}
@@ -181,6 +182,7 @@ if (id === undefined || id === null || id === "") {
 主键值应当用于构造单条数据请求，而不是把整个表格行不加区分地作为请求参数。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[当前行 rowData] --> B[读取面板 mainKey]
   B --> C[提取对应 id]
@@ -311,7 +313,8 @@ const detailItems = Object.entries(detailSchema.properties)
 合并前检查源分支、目标分支、提交记录和文件变更，确认目标是开发分支。远端完成合并之后，本地再切回 `develop` 拉取最新代码，并启动项目。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[动态组件功能分支] --> B[代码检查与提交]
   B --> C[发起合并请求]
   C --> D[核对并合并到 develop]

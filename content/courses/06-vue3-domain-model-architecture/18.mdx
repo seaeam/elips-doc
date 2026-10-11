@@ -79,7 +79,8 @@ Panel 本身不发送商品列表请求，也不处理某个具体字段。它�
 为避免丢失，表格仍然需要保存一份当前条件。既然最终必须有状态，课程选择从一开始就把条件作为响应式数据管理，而不是先层层传参，再临时找位置缓存。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[SearchPanel search] --> B[SchemaView apiProps]
   B --> C[provide]
   C --> D[TablePanel inject]

@@ -137,6 +137,17 @@
   }
 }
 
+/* Mermaid flowcharts keep their native font size; wide branches scroll locally. */
+article div:has(> svg.flowchart) {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+
+article svg.flowchart {
+  max-width: none;
+}
+
 @keyframes shine {
   0% {
     background-position: 0% 0%;

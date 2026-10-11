@@ -90,7 +90,8 @@ app.use(ElementPlus)
 修复后应先注册，再挂载：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["createApp"] --> B["安装公共插件"]
   B --> C["安装本页扩展"]
   C --> D["路由准备"]

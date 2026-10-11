@@ -30,6 +30,7 @@ description: "围绕「项目初始化」整理的课程复盘笔记，聚焦Nod
 本节课会围绕下面这条线推进：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[准备 Node.js 环境] --> B[初始化 package.json]
   B --> C[配置项目依赖]
@@ -61,6 +62,7 @@ flowchart TD
 它的作用是管理本地多个 Node.js 版本，让开发者可以根据项目需要进行安装和切换。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[本地有多个项目] --> B[不同项目依赖不同 Node.js 版本]
   B --> C[使用 nvm 管理版本]
@@ -143,6 +145,7 @@ npm init
 它是整个 Node.js 项目的核心配置文件，后续项目依赖、开发命令、规范配置都会逐步写到这里。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[npm init] --> B[填写项目信息]
   B --> C[生成 package.json]
@@ -224,7 +227,8 @@ npm config set registry https://registry.npmjs.org/
 这个过程可以这样理解：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[npm install] --> B[默认 npm 官方源]
   A --> C[配置镜像源]
   C --> D[从镜像源下载依赖]
@@ -303,6 +307,7 @@ localhost:8080
 因为当前只是把 Koa 服务启动起来，还没有配置具体路由，也没有返回具体页面内容。只要浏览器能访问到这个服务，就说明入口文件已经生效。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[编写 index.js] --> B[执行 node index.js]
   B --> C[Koa 服务启动]
@@ -503,6 +508,7 @@ Git Hooks 可以理解为 Git 在某些操作发生时提供的钩子。
 当执行 Git 提交时，钩子会自动触发对应校验。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[执行 git commit] --> B[触发 pre-commit]
   B --> C[执行 npm run lint]
@@ -552,6 +558,7 @@ validate-commit-msg
 配置完成后，一次正常提交会变成下面这样：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[修改代码] --> B[执行提交]
   B --> C[ESLint 检查代码]
@@ -596,6 +603,7 @@ git push
 可以把当前初始化结果整理成：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[项目初始化完成] --> B[运行环境统一]
   A --> C[依赖配置完成]

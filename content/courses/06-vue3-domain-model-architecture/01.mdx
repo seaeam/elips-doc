@@ -28,6 +28,7 @@ description: "从重复业务需求推导 Dashboard DSL，梳理递归菜单、�
 课程希望沉淀的，是这一整段可以复用的业务开发过程。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["电商系统 A"] --> C["商品、订单、客户等共同能力"]
   B["电商系统 B"] --> C
@@ -71,6 +72,7 @@ DSL 就是表达这些配置的专用语言。对当前课程而言，它以 Jav
 现在需要在模板页面与业务视图之间加入一层配置解析能力：读取一份项目配置，决定展示哪些菜单、使用哪类视图，再把对应的数据交给组件。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["浏览器请求页面"] --> B["BFF 返回模板入口"]
   B --> C["Vue 模板页面启动"]
@@ -236,6 +238,7 @@ const operation = {
 课程对当前 Dashboard 设计加了一条边界：Sider 内的菜单可以继续使用分组，但不再嵌套 Sider 模块。这样既能描述目标管理后台，也避免无边界地增加侧栏层数。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["头部菜单"] --> B["直接进入模块"]
   A --> C["进入 Sider 容器"]
@@ -259,6 +262,7 @@ flowchart TD
 课程希望从数据结构出发：先定义用户有哪些字段、每个字段是什么类型，再补充这个字段在搜索、展示、编辑场景中的规则。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["用户数据结构"] --> B["name：字符串"]
   A --> C["age：数字"]
@@ -350,6 +354,7 @@ Schema 页面既要展示数据，也要新增、修改和删除数据，因此�
 所以课程继续引入面向对象的继承思路：把电商领域的共同配置作为模型，把具体客户的配置作为派生项目。项目继承共同能力，只描述自己的新增或变化部分。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["Dashboard 模板与 DSL"] --> B["电商领域模型"]
   A --> C["教育领域模型"]

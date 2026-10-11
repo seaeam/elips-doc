@@ -30,6 +30,7 @@ description: "围绕「gitflow 协同流程操作演示」整理的课程复盘�
 整体目标可以概括为：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[建立分支规范] --> B[隔离不同开发任务]
   B --> C[通过合并请求提交代码]
@@ -68,7 +69,8 @@ flowchart TD
 可以把 `master` 理解成生产环境代码的基准点。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[线上运行效果] --> B[对应代码]
   B --> C[master 分支]
 ```
@@ -86,6 +88,7 @@ flowchart LR
 `master` 和 `develop` 的关系可以这样理解：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[master<br/>线上最新代码]
   B[develop<br/>研发最新代码]
@@ -109,6 +112,7 @@ flowchart TD
 流程如下：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[develop 分支] --> B[拉出 feature 分支]
   B --> C[在 feature 上开发功能]
@@ -139,6 +143,7 @@ flowchart TD
 `hotfix` 从 `master` 拉出，修复完之后需要同时合并回 `master` 和 `develop`。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[线上出现 Bug] --> B[从 master 拉出 hotfix 分支]
   B --> C[修复线上问题]
@@ -163,6 +168,7 @@ flowchart TD
 四类分支之间的关系可以整理成下面这张图：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   M[master<br/>线上稳定代码]
   D[develop<br/>研发最新代码]
@@ -276,6 +282,7 @@ feature/change-with-me
 对应流程如下：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[切换到 feature 分支] --> B[在 IDE 中修改代码]
   B --> C[SourceTree 检测到文件变更]
@@ -315,7 +322,8 @@ git push
 只有当功能开发完成，并通过合并请求合回 `develop` 后，`develop` 才会获得这次改动。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[feature 分支修改代码] --> B[master 不受影响]
   A --> C[develop 不受影响]
   A --> D[等待合并请求]
@@ -345,6 +353,7 @@ feature/change-with-me  →  develop
 这让评审者可以清楚看到这次功能到底改了什么。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[创建合并请求] --> B[选择源分支 feature/change-with-me]
   B --> C[选择目标分支 develop]
@@ -380,6 +389,7 @@ flowchart TD
 Code Review 的流程可以整理成：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[评审者查看合并请求] --> B[查看提交记录]
   B --> C[查看文件改动]
@@ -424,7 +434,8 @@ feature/change-with-me  →  develop
 合并完成后，远程 `develop` 分支就拥有了这次功能代码。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[feature/change-with-me] -->|合并请求通过| B[develop]
   B --> C[develop 获得功能改动]
 ```
@@ -465,6 +476,7 @@ git pull
 本节课真正希望学习者形成惯性认知的，是下面这套完整流程。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[接到新需求] --> B[切换到 develop]
   B --> C[从 develop 拉出 feature 分支]

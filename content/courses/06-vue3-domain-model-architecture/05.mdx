@@ -26,6 +26,7 @@ description: "实现 Dashboard 全量及同模型应用列表接口，通过两�
 “我是谁”对应当前项目的完整配置，包含标题、菜单、模块类型等。“还有谁”对应一个精简的项目列表，供头部下拉框切换应用。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["进入 Dashboard"] --> B["读取当前项目配置"]
   A --> C["读取同模型项目列表"]
@@ -281,7 +282,8 @@ if (shouldSkipCurrentModel) {
 课堂最后再次归纳接口开发的完整过程：定义参数和行为，配置路由，在 Controller 处理业务，在 Service 处理数据，再用测试验证。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["接口定义"] --> B["路由入口"]
   B --> C["Controller 组织业务"]
   C --> D["Service 处理数据"]

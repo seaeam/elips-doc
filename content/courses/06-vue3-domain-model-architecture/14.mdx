@@ -26,6 +26,7 @@ TablePanel 包含头部操作区和表格区域。SchemaTable 放在公共 `widg
 这个拆分决定了两者的职责：TablePanel 组织页面业务，SchemaTable 组织表格展示。头部按钮属于 TablePanel；每一行的操作按钮出现在 SchemaTable 内，但点击后的具体业务仍然交给外层处理。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[TablePanel] --> B[OperationPanel 头部按钮]
   A --> C[SchemaTable]

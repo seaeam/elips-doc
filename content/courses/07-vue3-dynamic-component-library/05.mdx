@@ -28,6 +28,7 @@ EditForm 的工作可以拆成六步：设计组件配置与字段 Option；检�
 其中值得注意的是第二步。已有 Hook 根据 componentConfig 的组件名，读取同名前缀的字段 Option，再生成统一的 `{ schema, config }`，所以增加 editForm 不需要再写一份专门的 DTO 提取逻辑。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["componentConfig.editForm"] --> C["useSchema 通用组件转换"]
   B["字段 editFormOption"] --> C

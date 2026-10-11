@@ -28,6 +28,7 @@ description: "复盘模型继承、项目覆盖、Dashboard 菜单层级、Schem
 整体链路可以整理为：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[领域模型 Model] --> B[派生项目 Project]
   B --> C[继承 覆盖 扩展]
@@ -94,7 +95,8 @@ const project = {
 重要的是对外输出已经合并好的项目配置。页面不需要一边渲染一边重新实现继承算法，也不需要知道某个字段究竟来自模型还是项目覆盖。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[模型原始配置] --> C[项目扩展模型逻辑]
   B[项目差异配置] --> C
   C --> D[完整项目配置]
@@ -111,6 +113,7 @@ flowchart LR
 分组类型继续递归菜单项；业务模块类型再通过 `modelType` 进入不同视图，并读取对应 Config。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[Dashboard menu item] --> B{menuType}
   B -->|group| C[递归子菜单]
@@ -190,6 +193,7 @@ const schema = {
 同一份原始 Schema 包含多个组件的 Option，直接全量传给每个组件会引入大量无关信息。因此 `useSchema` 中的 `buildDtoSchema` 根据组件名提取字段，并将选中的配置归一为 `option`。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[原始业务 Schema] --> B[buildDtoSchema]
   B --> C[tableSchema + tableConfig]

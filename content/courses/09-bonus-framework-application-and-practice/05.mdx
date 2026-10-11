@@ -26,6 +26,7 @@ description: "配置人员管理 DSL，完成列表分页与 CRUD 接口，扩�
 与最初从零搭建页面不同，这次已经有模板引擎、SchemaTable、SchemaSearchBar 和动态表单，业务开发首先面对的是一份模型配置。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[人员管理业务需求] --> B[People 领域模型]
   B --> C[企业项目配置]
@@ -178,7 +179,8 @@ const options = [
 详情面板同样需要 `mainKey`。它从当前行获取用户 ID，再通过详情接口读取对应记录，而不是假定表格行已经包含所有详情数据。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[点击当前行详情] --> B[按 mainKey 读取 userId]
   B --> C[请求单条用户数据]
   C --> D[DetailPanel 消费详情字段配置]
@@ -361,7 +363,8 @@ return user || null
 Service 除了保存表单数据，还要补齐由后端负责的字段。课堂使用 UUID 工具生成用户 ID，并用随机密码工具生成初始密码，同时记录创建时间。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[CreateForm 提交] --> B[POST 用户接口]
   B --> C[校验与提取允许字段]
   C --> D[生成 userId 与初始凭据]
@@ -457,7 +460,8 @@ await app.database("t_user")
 因此用户看到的“删除成功”，来自两个动作配合：写入时修改状态，读取时只查询正常状态。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[点击删除] --> B[提交 userId]
   B --> C[记录状态改为 -1]
   C --> D[刷新列表]
@@ -492,6 +496,7 @@ flowchart LR
 这些版本号是课堂当时的演示记录，继续开发时应使用自己的版本序列。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[业务实践发现通用问题] --> B[修改 ELPIS 框架]
   B --> C[检查并提升版本]

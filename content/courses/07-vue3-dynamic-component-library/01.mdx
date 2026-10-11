@@ -28,7 +28,8 @@ description: "设计 componentConfig、createFormOption 与 showComponent 事件
 这并不意味着所有动态组件都是表单。课程明确提出，动态组件可以是弹窗、抽屉或其他类型的业务交互，CreateForm 只是第一种落地案例。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[按钮配置] --> B[点击发出事件]
   B --> C[SchemaView 调度]
   C --> D[指定动态组件]

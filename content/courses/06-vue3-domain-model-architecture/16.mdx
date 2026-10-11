@@ -30,6 +30,7 @@ description: "贯通 projectKey、History 路由、页面注入、请求头与 p
 正确的数据关系应该是：同一模型定义共同结构，不同项目传入自己的 projectKey，服务端再根据这个维度查询对应数据。模型可以共享，记录仍然有归属。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[电商领域模型] --> B[项目 A]
   A --> C[项目 B]

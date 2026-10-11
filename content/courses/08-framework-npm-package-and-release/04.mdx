@@ -78,7 +78,8 @@ if (typeof businessRouterConfig === "function") {
 把视图加入路由表以后，还要让模型配置里的菜单指向相应路径。用户点击菜单，Dashboard 根据配置切换到自定义路由，Vue Router 再显示 Todo。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["业务模型中的菜单"] --> B["Dashboard 菜单渲染"]
   B --> C["用户选择自定义入口"]
   C --> D["业务扩展路由"]
@@ -250,7 +251,8 @@ export default {
 它的流程没有变化：约定业务文件位置、配置可选模块 alias、引入业务映射、与内置映射合并、由原动态渲染器消费。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["内置搜索组件配置"] --> C["合并后的搜索组件注册表"]
   B["业务搜索组件配置或空模块"] --> C
   C --> D["根据 Schema 类型选择组件"]

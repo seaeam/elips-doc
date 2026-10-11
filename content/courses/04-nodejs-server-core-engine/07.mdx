@@ -26,7 +26,8 @@ description: "应用 elpis-core 的目录约定，验证环境配置覆盖、Nod
 本节先完成页面这条链路。API 的实现会在下一节继续展开。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[浏览器请求页面] --> B[业务路由]
   B --> C[View Controller]
   C --> D[模板引擎读取 tpl]
@@ -105,7 +106,8 @@ set "ENV=local" && node index.js
 如果每次修改都手动停止并重新启动服务，后续开发会非常繁琐。因此本地脚本使用 Nodemon 监听文件变化，并在变化后重启进程。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[修改服务端文件] --> B[Nodemon 检测变化]
   B --> C[重启 Node.js 进程]
   C --> D[重新执行 Loader]
@@ -275,6 +277,7 @@ module.exports = (app, router) => {
 原因就在前一节编写的 Loader：它找到 `app/controller/view.js`，执行工厂函数得到类，创建实例，最后以 `view` 为属性名挂载到 `app.controller`。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[app/controller/view.js] --> B[Controller Loader 扫描文件]
   B --> C[执行工厂得到 ViewController]
@@ -384,6 +387,7 @@ try {
 项目入口中的配置，最终是如何来到浏览器里的？
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[项目入口调用 start 并传入 options] --> B[内核保存 app.options]
   B --> C[ViewController 读取配置]

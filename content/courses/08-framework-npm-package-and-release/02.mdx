@@ -104,7 +104,8 @@ SDK 化后，前端构建至少涉及三种位置。
 课程当前先编译框架内置页面，所以扫描入口时应找到框架 `app/pages`。而输出要给业务项目中的 Koa 读取，仍然应写入使用方 `app/public/dist`。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["框架内置 pages 和 view"] --> B["框架提供的 webpack 配置"]
   C["框架依赖中的 Loader"] --> B
   D["业务 build.js"] --> B

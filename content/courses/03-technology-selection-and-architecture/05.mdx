@@ -42,6 +42,7 @@ description: 后端BFF层系统设计讲解
 BFF 层会被拆成三层：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[BFF 层] --> B[接入层]
   A --> C[业务层]
@@ -132,7 +133,8 @@ Controller 负责组织业务流程，Service 负责完成具体能力。
 这种拆分可以让系统结构更清楚。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[Controller<br/>组织业务流程] --> B[UserService<br/>用户数据能力]
   A --> C[LogService<br/>日志能力]
   A --> D[HttpService<br/>对外请求能力]
@@ -191,6 +193,7 @@ app
 LPKoa 的职责可以概括为：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[服务启动] --> B[读取 app 目录]
   B --> C[按照目录规则扫描文件]
@@ -237,6 +240,7 @@ LPKoa 的意义，是让学习者亲手理解一个服务框架的核心组织�
 完整流程可以整理成这样：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[外部请求进入服务端] --> B[Router 路由分发]
   B --> C[Router Schema<br/>参数与规则校验]
@@ -318,6 +322,7 @@ localhost:3000/api/getUserList
 这个设计让 BFF 层有统一入口。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[用户请求] --> B{请求类型}
 

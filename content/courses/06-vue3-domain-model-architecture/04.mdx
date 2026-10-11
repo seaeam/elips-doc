@@ -58,6 +58,7 @@ app.mount('#app')
 左侧显示应用图标与标题，中间预留菜单，右侧容纳设置、应用切换与用户操作。主体则显示具体页面内容。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["HeaderContainer"] --> B["Header"]
   A --> C["Main"]
@@ -361,6 +362,7 @@ function onEnter(project) {
 业务区域内部又和接口结构一一对应：加载容器包住列表，模型循环生成分组，项目循环生成卡片，卡片中的按钮绑定当前项目。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["HeaderContainer"] --> B["标题：项目列表"]
   A --> C["默认插槽"]

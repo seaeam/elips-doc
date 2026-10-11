@@ -26,7 +26,8 @@ description: "围绕「webpack5 工程化设计」整理的课程复盘笔记，
 这时要解决的具体问题是：**怎样把方便开发和维护的源文件，变成现有服务端可以使用的产物？**
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["开发者编写前端源文件"] --> B["构建引擎"]
   B --> C["模板和静态资源产物"]
   D["浏览器访问页面路由"] --> E["Koa Controller"]
@@ -89,6 +90,7 @@ app
 例如一个入口加载模板组件，模板组件引用搜索栏和表格，表格又引用请求方法。这个过程可以整理成：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["entry.page1.js"] --> B["页面或模板组件"]
   B --> C["搜索栏组件"]
@@ -157,6 +159,7 @@ entry.page2.tpl
 开发环境关心修改反馈和调试。开发者修改组件后，理想效果是保存即可看到页面更新，并且能在浏览器里定位源代码。每改一行就手动构建、重启服务、刷新页面，会让开发过程非常缓慢。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["源文件和依赖图"] --> B["编译与模块组织"]
   B --> C{"当前环境"}

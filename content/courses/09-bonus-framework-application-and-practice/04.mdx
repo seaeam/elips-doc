@@ -28,7 +28,8 @@ description: "抽离业务 UserPanel，开放签名白名单配置，并实现 C
 课堂因此先处理这个问题：框架保留用户区域的位置与加载机制，具体面板由业务项目提供。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["框架 HeaderContainer"] --> B["读取业务 Header 配置"]
   B --> C["动态加载 UserPanel"]
   C --> D["业务决定头像、用户名与操作"]
@@ -228,6 +229,7 @@ module.exports = (app) => async (ctx, next) => {
 中间件集中读取 Cookie 中的 Token，执行验证，通过后继续 `next`；失败则终止当前受保护请求，并根据请求类型返回合适结果。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["请求进入登录校验"] --> B{是否属于允许匿名访问的入口}
   B -- 是 --> C["继续处理"]

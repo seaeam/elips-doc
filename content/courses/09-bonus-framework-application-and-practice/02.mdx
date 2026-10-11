@@ -21,7 +21,8 @@ description: "围绕「持续部署（CD）」整理的课程复盘笔记，聚�
 上一节的镜像仓库承担交接作用：CI 将代码、依赖、前端产物和 Node.js 运行环境组织成镜像，CD 根据部署配置把指定镜像运行到目标集群。代码仓库保存 deployment.yaml 与 service.yaml，镜像仓库保存应用镜像，两者在部署时共同决定实际结果。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["镜像仓库的新版本"] --> B["触发持续部署"]
   C["代码仓库的部署 YAML"] --> B
   B --> D["更新 Deployment"]
@@ -70,6 +71,7 @@ Service 为一组被选中的 Pod 提供稳定访问方式。Pod 重建后具体
 这里要特别注意层级。Namespace 是许多 Kubernetes 资源的组织范围，Node 是集群级资源，并不隶属于某个 Namespace。测试和生产的 Pod 可以运行在同一批节点上，不能把“两个命名空间”理解为“已经购买了两套独立物理机器”。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TB
   A["Kubernetes 集群"] --> B["计算节点资源"]
   A --> C["beta 命名空间"]
@@ -184,7 +186,8 @@ spec:
 `selector.app` 必须匹配 Pod 模板里的 `labels.app`。这个条件才是 Service 知道该把流量交给哪些实例的依据。Service 与 Deployment 放在同一个测试命名空间中，再通过这个标签建立访问关系。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["浏览器请求访问地址与 8081 端口"] --> B["Service 端口 8081"]
   B --> C["selector 匹配 app 标签"]
   C --> D["目标 Pod 端口 8081"]

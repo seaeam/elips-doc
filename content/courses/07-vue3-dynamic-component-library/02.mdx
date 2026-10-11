@@ -26,6 +26,7 @@ description: "构建 components DTO、required 标记、动态组件注册与实
 然后才是 SchemaView 提供上下文、动态组件接入、注册表、事件处理与模型联调。每一步都以“上一层输出什么，下一层需要什么”为线索。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[componentConfig 与字段 Option] --> B[useSchema 构建 components]
   B --> C[SchemaView 提供上下文]

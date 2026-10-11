@@ -24,7 +24,8 @@ description: "围绕「抽离并发布 npm 包（5）」整理的课程复盘笔
 课程先把收尾工作列出来，再逐项处理。这样不会因为 npm 页面上出现一个包，就忽略代码边界和使用体验。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["清理业务残留"] --> B["补齐公开接口"]
   B --> C["整理依赖与文档"]
   C --> D["发布版本"]
@@ -206,6 +207,7 @@ npm install @your-name/elpis@1.0.1 --registry=https://registry.npmjs.org/
 如果安装后缺少 Loader，优先检查依赖声明；找不到模板或组件，检查包文件与内部路径；服务正常但模型为空，检查业务配置位置；link 时成功而正式安装失败，则重点比较两种消费方式的文件和依赖差异。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["安装发布版本"] --> B["调用 serverStart"]
   A --> C["调用 frontendBuild"]

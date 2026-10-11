@@ -239,6 +239,7 @@ function getProjectKeys(modelRoot, filePath) {
 按这个依赖关系，流程可以整理为：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["接收 app 与项目根路径"] --> B["扫描 model 目录"]
   B --> C["加载领域模型"]
@@ -284,6 +285,7 @@ const concatenatedMenu = [
 第三步遍历项目菜单。若某一项的 key 不存在于模型菜单，则把它追加到结果中。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A["模型菜单中的一项"] --> B{项目是否有相同 key}
   B -- 否 --> C["复制并保留模型项"]

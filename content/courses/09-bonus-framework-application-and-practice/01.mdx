@@ -23,7 +23,8 @@ description: "围绕「持续集成（CI）」整理的课程复盘笔记，聚�
 课程以制品仓库作为两段流程的交接点：持续集成负责把源代码变为制品，持续部署负责把指定制品运行到目标环境。两段流程有不同输入、输出，也有各自的日志和失败位置。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["提交 elpis-demo 代码"] --> B["检出指定分支与提交"]
   B --> C["安装依赖"]
   C --> D["生产构建前端"]

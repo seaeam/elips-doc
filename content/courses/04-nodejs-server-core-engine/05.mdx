@@ -26,6 +26,7 @@ description: "围绕「elpis-core 引擎内核实现（1）」整理的课程复
 这一点延续前面讲过的 GitFlow 协同流程。后续所有和 elpis-core 内核相关的代码，都应该在这个功能分支上完成，开发完成后再通过合并请求回到 `develop`。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[develop 分支] --> B[拉出 feature 分支]
   B --> C[开发 elpis-core 内核]
@@ -115,7 +116,8 @@ module.exports = {
 区别在于：Koa 的启动逻辑已经从项目根入口迁移到了 elpis-core 内核中。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[index.js] --> B[调用 elpisCore.start]
   B --> C[elpis-core/index.js]
   C --> D[创建 Koa 实例]
@@ -221,6 +223,7 @@ Windows:     C:\user\project\app
 可以整理成下面这条链路：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[调用 elpisCore.start] --> B[创建 Koa 实例]
   B --> C[挂载 options]
@@ -321,7 +324,8 @@ app.env.get()
 这一步完成后，elpis-core 就具备了基础环境识别能力。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[启动项目] --> B[读取 process.env.ENV]
   B --> C{当前环境}
   C --> D[local]
@@ -418,6 +422,7 @@ module.exports = {
 可以把加载顺序理解成：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[启动 elpis-core] --> B[加载 middleware]
   B --> C[加载 router schema]
@@ -455,7 +460,8 @@ module.exports = function routerSchemaLoader(app) {
 这种写法的核心是：每个 Loader 都围绕同一个 Koa 实例工作。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["Koa 实例 app"] --> B["middlewareLoader(app)"]
   A --> C["routerSchemaLoader(app)"]
   A --> D["controllerLoader(app)"]
@@ -495,7 +501,8 @@ app.middleware.customFolder.custom
 第二，把文件名和目录名转换成更适合 JavaScript 访问的驼峰形式。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[app/middleware/custom-folder/custom.js] --> B[middleware-loader 扫描]
   B --> C[转换命名]
   C --> D[app.middleware.customFolder.custom]
@@ -562,7 +569,8 @@ custom-folder/custom
 可以把处理过程理解成：
 
 ```mermaid
-flowchart
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["app/middleware/custom-folder/custom.js"] --> B["截取 middleware 后面的相对路径"]
   B --> C["custom-folder/custom.js"]
   C --> D["移除 .js 后缀"]
@@ -671,6 +679,7 @@ module.exports = function middlewareLoader(app) {
 `middleware-loader` 的完整流程可以整理成下面这样：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[进入 middleware-loader] --> B[定位 app/middleware 目录]
   B --> C[扫描所有 .js 文件]
@@ -734,7 +743,8 @@ app
 - API 参数校验中间件会读取这些规则并完成校验
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[router-schema 配置] --> B[JSON Schema 规则]
   B --> C[AJV 校验]
   C --> D[API 参数校验中间件]
@@ -825,6 +835,7 @@ module.exports = function routerSchemaLoader(app) {
 `router-schema-loader` 更直接，因为它加载的是规则配置，只需要把不同文件导出的对象合并起来。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[Loader 加载文件] --> B{文件类型}
 
@@ -850,7 +861,8 @@ flowchart TD
 修复后，再继续往下写。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[写一段代码] --> B[运行项目]
   B --> C{是否报错}
   C -->|有错误| D[根据错误定位问题]

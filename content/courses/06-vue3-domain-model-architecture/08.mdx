@@ -185,7 +185,8 @@ function onEnter(project) {
 但 URL 上有 key 还不够，HeaderView 需要主动读取并同步选中状态，而且要等菜单数据已经到达。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["URL 中的 key"] --> B["在菜单配置中查找"]
   B --> C["确定有效菜单"]
   C --> D["更新 activeKey"]

@@ -28,7 +28,8 @@ description: "解析 iframe 类型菜单与 iframeConfig.path，理解 IframeVie
 课程一开始强调，这节相对简单。简单的原因在于它要解析的 DSL 很少：页面类型决定进入 IframeView，配置中的地址决定打开哪个页面。和后面通过 Schema 生成搜索栏、表格和表单相比，这里没有字段到组件的复杂映射。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[选择菜单] --> B[读取菜单配置]
   B --> C[modelType 为 iframe]
   C --> D[IframeView]

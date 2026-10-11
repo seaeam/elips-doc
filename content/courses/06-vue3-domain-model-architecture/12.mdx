@@ -28,6 +28,7 @@ description: "搭建 SchemaView、SearchPanel 和 TablePanel，结合 useSchema�
 这里所说的“沉淀 80% 重复工作量”是课程对通用管理场景的设计目标，并不是所有业务都能直接套入固定页面。定制部分仍然有扩展入口。当前要先把重复出现的页面结构组织起来，让后续功能有明确的落点。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[一份业务 Schema] --> B[搜索条件]
   A --> C[列表字段]
@@ -119,7 +120,8 @@ Hook 最初提供一个响应式 `api`，并定义 `buildData`。`buildData` 的
 前面菜单 Store 已经提供了查找能力，当前直接复用。这个细节说明，通用方法的价值往往在后续功能中不断出现：当菜单查找集中在 Store 中，SchemaView 就不用重新遍历一遍菜单树。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[路由中的 key 和 siderKey] --> B[menuStore.findItem]
   C[menuStore.menuList] --> B
   B --> D[当前 menuItem]
@@ -201,6 +203,7 @@ export function useSchema(route, menuStore) {
 于是形成两条互补链路。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[SchemaView 挂载] --> B[onMounted]
   B --> C[buildData]

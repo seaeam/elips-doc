@@ -30,7 +30,8 @@ description: "实现模型应用列表 API，区分 Service 与 Controller 职�
 清理的目的是移除阶段性调试代码，现有的路由加载、统一响应和签名机制仍然保留。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A["前端应用列表"] --> B["GET 模型列表 API"]
   B --> C["Project Controller"]
   C --> D["Project Service"]

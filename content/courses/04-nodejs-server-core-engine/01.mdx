@@ -39,6 +39,7 @@ description: "围绕「创建项目 - git 环境搭建」整理的课程复盘�
 可以先把这一节的整体结构理解成下面这条线：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[进入实战阶段] --> B[了解 Git 基础流程]
   B --> C[使用 SourceTree 管理仓库]
@@ -58,7 +59,8 @@ Git 是后续项目代码管理的基础工具。
 最基础的流程是：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[远程仓库] -->|git clone| B[本地仓库]
   B --> C[本地开发]
   C --> D[git add]
@@ -91,6 +93,7 @@ git push
 这条流程可以整理成这样：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[同步远端最新代码] --> B[创建功能分支]
   B --> C[在功能分支开发]
@@ -138,6 +141,7 @@ Coding 在这里不只是代码仓库平台，还会承载后续项目里的多�
 可以把 Coding 在课程中的位置理解成：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[Coding 平台] --> B[项目管理]
   A --> C[代码仓库]
@@ -164,6 +168,7 @@ Coding 项目更像一个研发协同空间，里面可以继续创建代码仓�
 这一步的关系可以这样理解：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[Coding 平台] --> B[创建项目 LP]
   B --> C[代码仓库]
@@ -188,7 +193,8 @@ flowchart TD
 可以把流程整理成：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[进入 Coding 项目] --> B[创建代码仓库]
   B --> C[选择 Git]
   C --> D[填写仓库名称和描述]
@@ -241,6 +247,7 @@ SSH 方式也可以使用，但需要提前配置 SSH Key。课程中没有展�
 整体关系可以这样表示：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[Coding 远程仓库] -->|git clone| B[本地项目文件夹]
   B --> C[IDE 中编辑代码]
@@ -268,7 +275,8 @@ git clone <Coding 仓库地址>
 接下来需要把这个项目分别交给 IDE 和 SourceTree 管理：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[本地项目目录] --> B[拖入 IDE]
   A --> C[拖入 SourceTree]
   B --> D[进行代码开发]
@@ -290,6 +298,7 @@ SourceTree 负责观察变更、提交代码、推送远端和管理分支。
 完整流程如下：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[在 IDE 中修改文件] --> B[SourceTree 检测到文件变更]
   B --> C[选择变更文件]
@@ -320,6 +329,7 @@ git push
 这里可以先理解后续协作流程：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[完成阶段代码] --> B[提交到本地仓库]
   B --> C[推送到远程分支]

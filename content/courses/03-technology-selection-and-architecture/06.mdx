@@ -34,6 +34,7 @@ description: "围绕「前端领域模型架构设计」整理的课程复盘笔
 所以前端设计需要同时满足两类诉求：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[前端系统设计诉求] --> B[重复能力沉淀]
   A --> C[定制能力扩展]
@@ -87,7 +88,8 @@ DSL 可以理解成一种面向当前业务场景的“描述语言”。它不�
 可以把这个过程理解成：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[DSL / Schema<br/>描述系统结构] --> B[解析引擎]
   B --> C[生成具体页面]
   C --> D[形成可运行系统]
@@ -121,6 +123,7 @@ DSL 的作用，是把系统里的重复结构描述出来。
 DSL 的核心价值可以概括为：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[重复页面结构] --> B[抽象成 DSL]
   B --> C[统一描述页面能力]
@@ -222,6 +225,7 @@ classDiagram
 可以整理成下面这条链路：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[定义 DSL] --> B[描述领域模型]
   B --> C[支持继承、扩展、重载]
@@ -245,7 +249,8 @@ flowchart TD
 整体关系可以这样理解：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[DSL / Schema] --> B[解析引擎]
   B --> C[模板框架]
   C --> D[工具库]
@@ -276,6 +281,7 @@ flowchart LR
 很多系统都会用到相似的请求方法、数据处理方法、格式化方法。如果每个页面各写一套，后期维护会非常困难。把这些能力沉淀到工具库中，可以让业务开发更稳定，也更容易复用。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[工具库] --> B[网络请求]
   A --> C[公共方法]
@@ -340,6 +346,7 @@ flowchart TD
 表格在中后台系统里非常高频，通常会带有查看、编辑、删除、启用、禁用、导出等操作。通过 Schema 描述操作按钮，再由 Table 动态渲染，就可以避免每个页面重复写按钮逻辑。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[Table 组件] --> B[读取 Schema]
   B --> C[生成表格列]
@@ -374,6 +381,7 @@ Custom View 用于特殊程度比较高、无法完全通过 Schema 描述的页
 整体分发过程可以这样理解：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[进入模板页] --> B[读取 DSL / Schema]
   B --> C{判断页面类型}
@@ -398,6 +406,7 @@ Schema View 是前端领域模型设计中最重要的一类页面。
 一个典型的 Schema View 页面，可能会由这些组件组成：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[Schema View] --> B[Header Container]
   A --> C[Sider Container]
@@ -424,7 +433,8 @@ Iframe View 用来支持第三方页面引入。
 它的作用比较清晰：
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[模板页] --> B[Iframe View]
   B --> C[第三方服务页面]
 ```
@@ -458,6 +468,7 @@ Custom View 提供了完全自定义开发的空间。
 它可以先从一个核心模板页开始，把通用能力跑通；后续根据业务复杂度，再扩展更多模板页。
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[前端系统] --> B[模板页入口 A<br/>课程重点实现]
   A --> C[模板页入口 B<br/>后续可扩展]
@@ -484,7 +495,8 @@ flowchart TD
 这正是本节课希望达成的状态。
 
 ```mermaid
-flowchart LR
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
   A[过去：重复开发后台页面] --> B[列表 / 表单 / 搜索 / 按钮反复手写]
   B --> C[大量体力活]
 
@@ -500,6 +512,7 @@ flowchart LR
 可以理解为：
 
 ```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
 flowchart TD
   A[前端系统能力] --> B[可复用部分<br/>标准模型、模板、组件、工具]
   A --> C[定制部分<br/>新增需求、特殊页面、项目差异]
